@@ -18,4 +18,10 @@
     <PackageReference Include="CefSharp.Wpf.NETCore" Version="138.0.170" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Resources\Strings.Designer.cs">
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>
