@@ -22,6 +22,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         WindowMaximizeFix.Apply(this);
+        WindowStateStore.Apply(this);
         TabStrip.ItemsSource = _tabs;
         BookmarksList.ItemsSource = _bookmarkStore.Bookmarks;
         BookmarksBarList.ItemsSource = _bookmarkStore.Bookmarks;

@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework">
+                    xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+                    xmlns:p="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework">
 
     <!--
         Ortak kontrol stilleri. Yeni bir buton görünümü gerektiğinde önce
@@ -13,6 +14,11 @@
         köşesiz pencere kontrolleri) — tek fark renk paletimiz (#13ABBB vurgu,
         siyah/koyu zemin). Şekil/boyut Chrome'a sadık kalır, renk bize ait.
     -->
+
+    <!-- İkon glifleri (Path, Icons.xaml) için: dolgu rengi butonun kendi Foreground'unu takip eder. -->
+    <Style x:Key="IconPathStyle" TargetType="Path">
+        <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=p:ButtonBase}, Path=Foreground}" />
+    </Style>
 
     <DropShadowEffect x:Key="HoverShadowEffect" Color="{StaticResource SoftShadowColor}"
                        Direction="270" ShadowDepth="1" BlurRadius="6" Opacity="0.28" />

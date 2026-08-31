@@ -41,9 +41,13 @@
                                         <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="14,0,0,0"
                                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                                                    Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
-                                        <Button x:Name="CloseBtn" Grid.Column="1" Content="&#10005;"
+                                        <Button x:Name="CloseBtn" Grid.Column="1"
                                                 Style="{StaticResource TabCloseButtonStyle}" Visibility="Collapsed"
-                                                Click="CloseTabButton_Click" Tag="{Binding}" />
+                                                Click="CloseTabButton_Click" Tag="{Binding}">
+                                            <Viewbox Width="12" Height="12">
+                                                <Path Data="{StaticResource IconClose}" Style="{StaticResource IconPathStyle}" />
+                                            </Viewbox>
+                                        </Button>
                                     </Grid>
                                 </Border>
                                 <DataTemplate.Triggers>
@@ -58,8 +62,12 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Button Content="+" Style="{StaticResource NewTabButtonStyle}" Width="30" Height="42" Margin="0"
-                            Click="NewTabButton_Click" />
+                    <Button Style="{StaticResource NewTabButtonStyle}" Width="30" Height="42" Margin="0"
+                            Click="NewTabButton_Click">
+                        <Viewbox Width="16" Height="16">
+                            <Path Data="{StaticResource IconAdd}" Style="{StaticResource IconPathStyle}" />
+                        </Viewbox>
+                    </Button>
                 </StackPanel>
             </ScrollViewer>
 
@@ -79,24 +87,52 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="8,0" VerticalAlignment="Center">
-                <Button Content="&#8592;" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="BackButton_Click" />
-                <Button Content="&#8594;" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="ForwardButton_Click" />
-                <Button Content="&#8635;" Style="{StaticResource ToolbarButtonStyle}" Click="ReloadButton_Click" />
+                <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="BackButton_Click">
+                    <Viewbox Width="18" Height="18">
+                        <Path Data="{StaticResource IconBack}" Style="{StaticResource IconPathStyle}" />
+                    </Viewbox>
+                </Button>
+                <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="ForwardButton_Click">
+                    <Viewbox Width="18" Height="18">
+                        <Path Data="{StaticResource IconForward}" Style="{StaticResource IconPathStyle}" />
+                    </Viewbox>
+                </Button>
+                <Button Style="{StaticResource ToolbarButtonStyle}" Click="ReloadButton_Click">
+                    <Viewbox Width="18" Height="18">
+                        <Path Data="{StaticResource IconRefresh}" Style="{StaticResource IconPathStyle}" />
+                    </Viewbox>
+                </Button>
             </StackPanel>
 
             <TextBox x:Name="AddressBar" Grid.Column="1" Margin="4,6" Style="{StaticResource AddressBarStyle}"
                      KeyDown="AddressBar_KeyDown" />
 
             <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,8,0" VerticalAlignment="Center">
-                <ToggleButton x:Name="StarButton" Content="&#9733;" Style="{StaticResource StarToggleButtonStyle}"
+                <ToggleButton x:Name="StarButton" Style="{StaticResource StarToggleButtonStyle}"
                               Margin="0,0,2,0" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
-                              Click="StarButton_Click" />
-                <Button x:Name="BookmarksButton" Content="&#9776;" Style="{StaticResource ToolbarButtonStyle}"
-                        Margin="0,0,2,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click" />
-                <Button x:Name="HistoryButton" Content="&#8634;" Style="{StaticResource ToolbarButtonStyle}"
-                        Margin="0,0,2,0" ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click" />
-                <Button x:Name="DownloadsButton" Content="&#8595;" Style="{StaticResource ToolbarButtonStyle}"
-                        ToolTip="{x:Static res:Strings.DownloadsTooltip}" Click="DownloadsButton_Click" />
+                              Click="StarButton_Click">
+                    <Viewbox Width="18" Height="18">
+                        <Path Data="{StaticResource IconStar}" Style="{StaticResource IconPathStyle}" />
+                    </Viewbox>
+                </ToggleButton>
+                <Button x:Name="BookmarksButton" Style="{StaticResource ToolbarButtonStyle}"
+                        Margin="0,0,2,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click">
+                    <Viewbox Width="18" Height="18">
+                        <Path Data="{StaticResource IconBookmarks}" Style="{StaticResource IconPathStyle}" />
+                    </Viewbox>
+                </Button>
+                <Button x:Name="HistoryButton" Style="{StaticResource ToolbarButtonStyle}"
+                        Margin="0,0,2,0" ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click">
+                    <Viewbox Width="18" Height="18">
+                        <Path Data="{StaticResource IconHistory}" Style="{StaticResource IconPathStyle}" />
+                    </Viewbox>
+                </Button>
+                <Button x:Name="DownloadsButton" Style="{StaticResource ToolbarButtonStyle}"
+                        ToolTip="{x:Static res:Strings.DownloadsTooltip}" Click="DownloadsButton_Click">
+                    <Viewbox Width="18" Height="18">
+                        <Path Data="{StaticResource IconDownload}" Style="{StaticResource IconPathStyle}" />
+                    </Viewbox>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -149,8 +185,12 @@
                                                            Foreground="{StaticResource TextSecondaryBrush}"
                                                            TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
-                                            <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
-                                                    Click="RemoveBookmarkButton_Click" Tag="{Binding}" />
+                                            <Button Grid.Column="1" Style="{StaticResource TabCloseButtonStyle}"
+                                                    Click="RemoveBookmarkButton_Click" Tag="{Binding}">
+                                                <Viewbox Width="12" Height="12">
+                                                    <Path Data="{StaticResource IconClose}" Style="{StaticResource IconPathStyle}" />
+                                                </Viewbox>
+                                            </Button>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -196,8 +236,12 @@
                                                            Foreground="{StaticResource TextSecondaryBrush}"
                                                            TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
-                                            <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
-                                                    Click="RemoveHistoryButton_Click" Tag="{Binding}" />
+                                            <Button Grid.Column="1" Style="{StaticResource TabCloseButtonStyle}"
+                                                    Click="RemoveHistoryButton_Click" Tag="{Binding}">
+                                                <Viewbox Width="12" Height="12">
+                                                    <Path Data="{StaticResource IconClose}" Style="{StaticResource IconPathStyle}" />
+                                                </Viewbox>
+                                            </Button>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
