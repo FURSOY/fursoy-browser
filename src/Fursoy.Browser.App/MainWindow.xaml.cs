@@ -4,6 +4,7 @@ using System.Windows.Input;
 using CefSharp;
 using Fursoy.Browser.App.Models;
 using Fursoy.Browser.App.Resources;
+using Fursoy.Browser.App.Services;
 
 namespace Fursoy.Browser.App;
 
@@ -12,12 +13,16 @@ public partial class MainWindow : Window
     private const string HomeAddress = "https://www.google.com";
 
     private readonly ObservableCollection<TabItem> _tabs = new();
+    private readonly BookmarkStore _bookmarkStore = new();
     private TabItem? _activeTab;
 
     public MainWindow()
     {
         InitializeComponent();
         TabStrip.ItemsSource = _tabs;
+        BookmarksList.ItemsSource = _bookmarkStore.Bookmarks;
+        _bookmarkStore.Bookmarks.CollectionChanged += (_, _) => UpdateBookmarksEmptyState();
+        UpdateBookmarksEmptyState();
         StateChanged += MainWindow_StateChanged;
 
         AddTab(HomeAddress);
@@ -39,7 +44,11 @@ public partial class MainWindow : Window
         tab.Browser.AddressChanged += (_, e) => Dispatcher.Invoke(() =>
         {
             tab.Address = e.NewValue as string ?? string.Empty;
-            if (tab == _activeTab) AddressBar.Text = tab.Address;
+            if (tab == _activeTab)
+            {
+                AddressBar.Text = tab.Address;
+                StarButton.IsChecked = _bookmarkStore.Contains(tab.Address);
+            }
         });
         tab.Browser.TitleChanged += (_, e) => Dispatcher.Invoke(() =>
         {
@@ -66,6 +75,7 @@ public partial class MainWindow : Window
         tab.IsActive = true;
         tab.Browser.Visibility = Visibility.Visible;
         AddressBar.Text = tab.Address;
+        StarButton.IsChecked = _bookmarkStore.Contains(tab.Address);
     }
 
     private void CloseTab(TabItem tab)
@@ -131,6 +141,36 @@ public partial class MainWindow : Window
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
     {
         _activeTab?.Browser.Reload();
+    }
+
+    private void StarButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_activeTab == null) return;
+        _bookmarkStore.Toggle(_activeTab.Address, _activeTab.Title);
+    }
+
+    private void BookmarksButton_Click(object sender, RoutedEventArgs e)
+    {
+        BookmarksPopup.IsOpen = !BookmarksPopup.IsOpen;
+    }
+
+    private void BookmarkRow_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: Bookmark bookmark } || _activeTab == null) return;
+        _activeTab.Browser.Address = bookmark.Url;
+        BookmarksPopup.IsOpen = false;
+    }
+
+    private void RemoveBookmarkButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: Bookmark bookmark }) return;
+        _bookmarkStore.Remove(bookmark);
+        if (_activeTab != null) StarButton.IsChecked = _bookmarkStore.Contains(_activeTab.Address);
+    }
+
+    private void UpdateBookmarksEmptyState()
+    {
+        BookmarksEmptyText.Visibility = _bookmarkStore.Bookmarks.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;

@@ -18,6 +18,14 @@ public static class Strings
 
     public static string NewTab => GetString("NewTab");
 
+    public static string Bookmarks => GetString("Bookmarks");
+
+    public static string BookmarksEmpty => GetString("BookmarksEmpty");
+
+    public static string AddBookmarkTooltip => GetString("AddBookmarkTooltip");
+
+    public static string BookmarksTooltip => GetString("BookmarksTooltip");
+
     public static string AppTitle => GetString("AppTitle");
 
     private static string GetString(string name) =>

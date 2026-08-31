@@ -61,6 +61,18 @@
   <data name="NewTab" xml:space="preserve">
     <value>Yeni Sekme</value>
   </data>
+  <data name="Bookmarks" xml:space="preserve">
+    <value>Yer İmleri</value>
+  </data>
+  <data name="BookmarksEmpty" xml:space="preserve">
+    <value>Henüz yer imi eklenmedi</value>
+  </data>
+  <data name="AddBookmarkTooltip" xml:space="preserve">
+    <value>Sayfayı yer imlerine ekle</value>
+  </data>
+  <data name="BookmarksTooltip" xml:space="preserve">
+    <value>Yer imleri</value>
+  </data>
   <data name="AppTitle" xml:space="preserve">
     <value>FURSOY Browser</value>
   </data>
