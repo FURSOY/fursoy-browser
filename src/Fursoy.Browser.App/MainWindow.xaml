@@ -30,18 +30,22 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border x:Name="TabBorder" Width="240" Height="35" Margin="0,6,0,0" CornerRadius="10,10,0,0"
+                                <Border x:Name="TabBorder" Width="240" Height="35" Margin="4,6,0,0" CornerRadius="10"
                                         Style="{StaticResource TabBorderStyle}"
                                         MouseLeftButtonUp="TabBorder_MouseLeftButtonUp" Tag="{Binding}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="28" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="12,0,0,0"
+                                        <Viewbox Grid.Column="0" Width="14" Height="14" Margin="12,0,0,0">
+                                            <Path Data="{StaticResource IconGlobe}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
+                                        </Viewbox>
+                                        <TextBlock Text="{Binding Title}" Grid.Column="1" Margin="8,0,0,0"
                                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                                                    Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
-                                        <Button x:Name="CloseBtn" Grid.Column="1"
+                                        <Button x:Name="CloseBtn" Grid.Column="2"
                                                 Style="{StaticResource TabCloseButtonStyle}" Visibility="Collapsed"
                                                 Click="CloseTabButton_Click" Tag="{Binding}">
                                             <Viewbox Width="16" Height="16">
@@ -62,7 +66,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Button Style="{StaticResource NewTabButtonStyle}" Width="30" Height="35" Margin="4,6,0,0"
+                    <Button Style="{StaticResource NewTabButtonStyle}" Width="30" Height="35" Margin="8,6,0,0"
                             Click="NewTabButton_Click">
                         <Viewbox Width="16" Height="16">
                             <Path Data="{StaticResource IconAdd}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />

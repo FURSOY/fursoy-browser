@@ -235,7 +235,7 @@
     <Style x:Key="AddressBarContainerStyle" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
         <Setter Property="CornerRadius" Value="999" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding IsKeyboardFocused, ElementName=AddressBar}" Value="True">
@@ -262,7 +262,7 @@
         paletimizin tek ayırt edici dokunuşu.
     -->
     <Style x:Key="TabBorderStyle" TargetType="Border">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="{StaticResource TabInactiveBrush}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}" />

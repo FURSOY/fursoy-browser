@@ -24,12 +24,20 @@
     <Color x:Key="AccentColorHover">#17C4D6</Color>
     <Color x:Key="AccentColorPressed">#0F8998</Color>
 
+    <!--
+        Üç katmanlı kontrast (Chrome'un kendi hiyerarşisiyle aynı mantık):
+        BackgroundColor (siyah, sekme şeridinin zemini) < TabInactiveColor
+        (pasif sekme dolgusu) < SurfaceColor (aktif sekme + araç çubuğu,
+        belirgin şekilde daha açık). Bu katmanlar birbirinden net ayrışmalı;
+        aksi halde sekmeler ve araç çubuğu zeminle kaynaşıp kayboluyor.
+    -->
     <Color x:Key="BackgroundColor">#000000</Color>
-    <Color x:Key="SurfaceColor">#151617</Color>
-    <Color x:Key="SurfaceHoverColor">#191A1C</Color>
-    <Color x:Key="SurfaceAltColor">#1C1D1F</Color>
-    <Color x:Key="SurfacePressedColor">#0E0F10</Color>
-    <Color x:Key="BorderColor">#2A2B2D</Color>
+    <Color x:Key="TabInactiveColor">#1C1D20</Color>
+    <Color x:Key="SurfaceColor">#303136</Color>
+    <Color x:Key="SurfaceHoverColor">#26272B</Color>
+    <Color x:Key="SurfaceAltColor">#3A3B40</Color>
+    <Color x:Key="SurfacePressedColor">#1A1B1E</Color>
+    <Color x:Key="BorderColor">#46474D</Color>
 
     <!-- Fluent katman çizgisi: yüzeylerin üst kenarında ince, yarı saydam bir "rim light". -->
     <Color x:Key="HighlightRimColor">#14FFFFFF</Color>
@@ -46,6 +54,7 @@
     <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentColorPressed}" />
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="TabInactiveBrush" Color="{StaticResource TabInactiveColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
     <SolidColorBrush x:Key="SurfaceHoverBrush" Color="{StaticResource SurfaceHoverColor}" />
     <SolidColorBrush x:Key="SurfaceAltBrush" Color="{StaticResource SurfaceAltColor}" />
