@@ -26,6 +26,14 @@ public static class Strings
 
     public static string BookmarksTooltip => GetString("BookmarksTooltip");
 
+    public static string History => GetString("History");
+
+    public static string HistoryEmpty => GetString("HistoryEmpty");
+
+    public static string HistoryTooltip => GetString("HistoryTooltip");
+
+    public static string ClearHistory => GetString("ClearHistory");
+
     public static string AppTitle => GetString("AppTitle");
 
     private static string GetString(string name) =>

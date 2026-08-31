@@ -14,6 +14,7 @@ public partial class MainWindow : Window
 
     private readonly ObservableCollection<TabItem> _tabs = new();
     private readonly BookmarkStore _bookmarkStore = new();
+    private readonly HistoryStore _historyStore = new();
     private TabItem? _activeTab;
 
     public MainWindow()
@@ -21,8 +22,11 @@ public partial class MainWindow : Window
         InitializeComponent();
         TabStrip.ItemsSource = _tabs;
         BookmarksList.ItemsSource = _bookmarkStore.Bookmarks;
+        HistoryList.ItemsSource = _historyStore.Entries;
         _bookmarkStore.Bookmarks.CollectionChanged += (_, _) => UpdateBookmarksEmptyState();
+        _historyStore.Entries.CollectionChanged += (_, _) => UpdateHistoryEmptyState();
         UpdateBookmarksEmptyState();
+        UpdateHistoryEmptyState();
         StateChanged += MainWindow_StateChanged;
 
         AddTab(HomeAddress);
@@ -54,6 +58,11 @@ public partial class MainWindow : Window
         {
             tab.Title = string.IsNullOrWhiteSpace(e.NewValue as string) ? Strings.NewTab : (string)e.NewValue!;
         });
+        tab.Browser.LoadingStateChanged += (_, e) =>
+        {
+            if (e.IsLoading) return;
+            Dispatcher.Invoke(() => _historyStore.Add(tab.Address, tab.Title));
+        };
 
         BrowserHost.Children.Add(tab.Browser);
         tab.Browser.Visibility = Visibility.Collapsed;
@@ -171,6 +180,31 @@ public partial class MainWindow : Window
     private void UpdateBookmarksEmptyState()
     {
         BookmarksEmptyText.Visibility = _bookmarkStore.Bookmarks.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void HistoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        HistoryPopup.IsOpen = !HistoryPopup.IsOpen;
+    }
+
+    private void HistoryRow_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: HistoryEntry entry } || _activeTab == null) return;
+        _activeTab.Browser.Address = entry.Url;
+        HistoryPopup.IsOpen = false;
+    }
+
+    private void RemoveHistoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: HistoryEntry entry }) return;
+        _historyStore.Remove(entry);
+    }
+
+    private void ClearHistoryButton_Click(object sender, RoutedEventArgs e) => _historyStore.Clear();
+
+    private void UpdateHistoryEmptyState()
+    {
+        HistoryEmptyText.Visibility = _historyStore.Entries.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;

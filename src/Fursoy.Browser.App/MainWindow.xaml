@@ -84,7 +84,9 @@
                               Margin="0,0,6,0" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
                               Click="StarButton_Click" />
                 <Button x:Name="BookmarksButton" Content="&#9776;" Style="{StaticResource ToolbarButtonStyle}"
-                        ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click" />
+                        Margin="0,0,6,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click" />
+                <Button x:Name="HistoryButton" Content="&#8634;" Style="{StaticResource ToolbarButtonStyle}"
+                        ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click" />
             </StackPanel>
         </Grid>
 
@@ -121,6 +123,53 @@
                                             </StackPanel>
                                             <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
                                                     Click="RemoveBookmarkButton_Click" Tag="{Binding}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <!-- Geçmiş açılır listesi -->
+        <Popup x:Name="HistoryPopup" PlacementTarget="{Binding ElementName=HistoryButton}"
+               Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="14" Padding="8" MinWidth="280" MaxWidth="360">
+                <StackPanel>
+                    <Grid Margin="8,4,4,8">
+                        <TextBlock Text="{x:Static res:Strings.History}" FontWeight="SemiBold" FontSize="13"
+                                   Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                        <Button Content="{x:Static res:Strings.ClearHistory}" Style="{StaticResource TextLinkButtonStyle}"
+                                HorizontalAlignment="Right" Click="ClearHistoryButton_Click" />
+                    </Grid>
+                    <TextBlock x:Name="HistoryEmptyText" Text="{x:Static res:Strings.HistoryEmpty}"
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                               Margin="8,0,8,8" />
+                    <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="HistoryList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="10" Padding="8,6" Margin="0,1"
+                                            Style="{StaticResource BookmarkRowStyle}"
+                                            MouseLeftButtonUp="HistoryRow_MouseLeftButtonUp" Tag="{Binding}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="12"
+                                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Url}" FontSize="10"
+                                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
+                                                    Click="RemoveHistoryButton_Click" Tag="{Binding}" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

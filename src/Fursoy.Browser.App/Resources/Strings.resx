@@ -73,6 +73,18 @@
   <data name="BookmarksTooltip" xml:space="preserve">
     <value>Yer imleri</value>
   </data>
+  <data name="History" xml:space="preserve">
+    <value>Geçmiş</value>
+  </data>
+  <data name="HistoryEmpty" xml:space="preserve">
+    <value>Henüz geçmiş yok</value>
+  </data>
+  <data name="HistoryTooltip" xml:space="preserve">
+    <value>Geçmiş</value>
+  </data>
+  <data name="ClearHistory" xml:space="preserve">
+    <value>Temizle</value>
+  </data>
   <data name="AppTitle" xml:space="preserve">
     <value>FURSOY Browser</value>
   </data>
