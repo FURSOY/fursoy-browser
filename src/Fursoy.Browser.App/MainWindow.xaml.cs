@@ -21,6 +21,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        WindowMaximizeFix.Apply(this);
         TabStrip.ItemsSource = _tabs;
         BookmarksList.ItemsSource = _bookmarkStore.Bookmarks;
         BookmarksBarList.ItemsSource = _bookmarkStore.Bookmarks;
@@ -39,11 +40,6 @@ public partial class MainWindow : Window
 
     private void MainWindow_StateChanged(object? sender, EventArgs e)
     {
-        var resizeBorder = SystemParameters.WindowResizeBorderThickness;
-        RootPanel.Margin = WindowState == WindowState.Maximized
-            ? new Thickness(resizeBorder.Left, resizeBorder.Top, resizeBorder.Right, resizeBorder.Bottom)
-            : new Thickness(0);
-
         MaximizeButton.Content = WindowState == WindowState.Maximized ? "\uE923" : "\uE922";
     }
 
@@ -102,7 +98,7 @@ public partial class MainWindow : Window
         _activeTab = tab;
         tab.IsActive = true;
         tab.Browser.Visibility = Visibility.Visible;
-        AddressBar.Text = tab.Address;
+        AddressBar.Text = IsNewTabAddress(tab.Address) ? string.Empty : tab.Address;
         StarButton.IsChecked = _bookmarkStore.Contains(tab.Address);
     }
 

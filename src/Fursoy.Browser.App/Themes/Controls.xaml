@@ -48,7 +48,7 @@
     <!-- Pencere kontrolleri (min/max/close): Windows/Chrome kuralı — dikdörtgen, köşesiz. -->
     <Style x:Key="TitleBarButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
         <Setter Property="Width" Value="46" />
-        <Setter Property="Height" Value="36" />
+        <Setter Property="Height" Value="40" />
         <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
         <Setter Property="FontSize" Value="10" />
         <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
@@ -72,9 +72,9 @@
     </Style>
 
     <Style x:Key="ToolbarButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
-        <Setter Property="Width" Value="28" />
-        <Setter Property="Height" Value="28" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Width" Value="34" />
+        <Setter Property="Height" Value="34" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
     </Style>
 
@@ -87,8 +87,8 @@
 
     <!-- Sekme kapatma çarpısı: Chrome'da hover'da dairesel bir vurgu alır (tek istisna). -->
     <Style x:Key="TabCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
-        <Setter Property="Width" Value="20" />
-        <Setter Property="Height" Value="20" />
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="24" />
         <Setter Property="FontSize" Value="9" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Setter Property="Template">
@@ -137,8 +137,8 @@
 
     <!-- Yıldız (yer imi) düğmesi: diğer araç çubuğu ikonlarıyla aynı boyut/şekil, sadece işaretliyken vurgu rengi. -->
     <Style x:Key="StarToggleButtonStyle" TargetType="ToggleButton">
-        <Setter Property="Width" Value="28" />
-        <Setter Property="Height" Value="28" />
+        <Setter Property="Width" Value="34" />
+        <Setter Property="Height" Value="34" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Setter Property="BorderThickness" Value="0" />

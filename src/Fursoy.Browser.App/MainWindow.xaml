@@ -8,13 +8,13 @@
         WindowStyle="None" ResizeMode="CanResize">
 
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="76" GlassFrameThickness="0" CornerRadius="0"
+        <shell:WindowChrome CaptionHeight="86" GlassFrameThickness="0" CornerRadius="0"
                              ResizeBorderThickness="5" UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
     <DockPanel x:Name="RootPanel">
         <!-- Tab strip + window controls -->
-        <Grid DockPanel.Dock="Top" Height="36" Background="{StaticResource BackgroundBrush}">
+        <Grid DockPanel.Dock="Top" Height="42" Background="{StaticResource BackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -30,15 +30,15 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border x:Name="TabBorder" Width="220" Height="30" Margin="2,6,0,0" CornerRadius="8,8,0,0"
+                                <Border x:Name="TabBorder" Width="220" Height="42" Margin="2,0,0,0" CornerRadius="8,8,0,0"
                                         BorderThickness="0,2,0,0" Style="{StaticResource TabBorderStyle}"
                                         MouseLeftButtonUp="TabBorder_MouseLeftButtonUp" Tag="{Binding}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="24" />
+                                            <ColumnDefinition Width="28" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="12,0,0,0"
+                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="14,0,0,0"
                                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                                                    Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
                                         <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
@@ -49,7 +49,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Button Content="+" Style="{StaticResource NewTabButtonStyle}" Margin="4,3,0,0"
+                    <Button Content="+" Style="{StaticResource NewTabButtonStyle}" Width="30" Height="42" Margin="0"
                             Click="NewTabButton_Click" />
                 </StackPanel>
             </ScrollViewer>
@@ -62,7 +62,7 @@
         </Grid>
 
         <!-- Navigation toolbar -->
-        <Grid DockPanel.Dock="Top" Height="40" Background="{StaticResource SurfaceBrush}">
+        <Grid DockPanel.Dock="Top" Height="44" Background="{StaticResource SurfaceBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
