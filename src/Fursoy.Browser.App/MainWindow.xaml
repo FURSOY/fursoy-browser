@@ -8,13 +8,13 @@
         WindowStyle="None" ResizeMode="CanResize">
 
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="86" GlassFrameThickness="0" CornerRadius="0"
+        <shell:WindowChrome CaptionHeight="87" GlassFrameThickness="0" CornerRadius="0"
                              ResizeBorderThickness="5" UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
     <DockPanel x:Name="RootPanel">
-        <!-- Tab strip + window controls -->
-        <Grid DockPanel.Dock="Top" Height="42" Background="{StaticResource BackgroundBrush}">
+        <!-- Tab strip + window controls (Chromium kTabStripHeight=41: 35px sekme + 6px üst boşluk) -->
+        <Grid DockPanel.Dock="Top" Height="41" Background="{StaticResource BackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -30,7 +30,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border x:Name="TabBorder" Width="256" Height="42" CornerRadius="10,10,0,0"
+                                <Border x:Name="TabBorder" Width="240" Height="35" Margin="0,6,0,0" CornerRadius="10,10,0,0"
                                         Style="{StaticResource TabBorderStyle}"
                                         MouseLeftButtonUp="TabBorder_MouseLeftButtonUp" Tag="{Binding}">
                                     <Grid>
@@ -38,13 +38,13 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="28" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="14,0,0,0"
+                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="12,0,0,0"
                                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                                                    Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
                                         <Button x:Name="CloseBtn" Grid.Column="1"
                                                 Style="{StaticResource TabCloseButtonStyle}" Visibility="Collapsed"
                                                 Click="CloseTabButton_Click" Tag="{Binding}">
-                                            <Viewbox Width="12" Height="12">
+                                            <Viewbox Width="16" Height="16">
                                                 <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
                                             </Viewbox>
                                         </Button>
@@ -62,7 +62,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Button Style="{StaticResource NewTabButtonStyle}" Width="30" Height="42" Margin="0"
+                    <Button Style="{StaticResource NewTabButtonStyle}" Width="30" Height="35" Margin="4,6,0,0"
                             Click="NewTabButton_Click">
                         <Viewbox Width="16" Height="16">
                             <Path Data="{StaticResource IconAdd}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
@@ -78,40 +78,40 @@
             </StackPanel>
         </Grid>
 
-        <!-- Navigation toolbar -->
-        <Grid DockPanel.Dock="Top" Height="44" Background="{StaticResource SurfaceBrush}">
+        <!-- Navigation toolbar (Chromium: 34px yükseklik + 6px dikey/6px yatay iç boşluk = 46px) -->
+        <Grid DockPanel.Dock="Top" Height="46" Background="{StaticResource SurfaceBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="8,0" VerticalAlignment="Center">
-                <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="BackButton_Click">
-                    <Viewbox Width="18" Height="18">
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="6,0" VerticalAlignment="Center">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,4,0" Click="BackButton_Click">
+                    <Viewbox Width="20" Height="20">
                         <Path Data="{StaticResource IconBack}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
-                <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="ForwardButton_Click">
-                    <Viewbox Width="18" Height="18">
+                <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,4,0" Click="ForwardButton_Click">
+                    <Viewbox Width="20" Height="20">
                         <Path Data="{StaticResource IconForward}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
                 <Button Style="{StaticResource ToolbarButtonStyle}" Click="ReloadButton_Click">
-                    <Viewbox Width="18" Height="18">
+                    <Viewbox Width="20" Height="20">
                         <Path Data="{StaticResource IconRefresh}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
             </StackPanel>
 
-            <Border Grid.Column="1" Margin="4,7" Padding="12,0" Style="{StaticResource AddressBarContainerStyle}"
+            <Border Grid.Column="1" Margin="9,6" Padding="12,0" Style="{StaticResource AddressBarContainerStyle}"
                     shell:WindowChrome.IsHitTestVisibleInChrome="True">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Viewbox Grid.Column="0" Width="15" Height="15" Margin="0,0,8,0">
+                    <Viewbox Grid.Column="0" Width="16" Height="16" Margin="0,0,8,0">
                         <Path Data="{StaticResource IconSearch}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                     <TextBox x:Name="AddressBar" Grid.Column="1" Style="{StaticResource AddressBarStyle}"
@@ -119,11 +119,11 @@
                 </Grid>
             </Border>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,8,0" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,6,0" VerticalAlignment="Center">
                 <ToggleButton x:Name="StarButton" Style="{StaticResource StarToggleButtonStyle}"
-                              Margin="0,0,2,0" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
+                              Margin="0,0,4,0" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
                               Click="StarButton_Click">
-                    <Viewbox Width="18" Height="18">
+                    <Viewbox Width="20" Height="20">
                         <Path Data="{StaticResource IconStar}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform">
                             <Path.Style>
                                 <Style TargetType="Path">
@@ -138,20 +138,20 @@
                     </Viewbox>
                 </ToggleButton>
                 <Button x:Name="BookmarksButton" Style="{StaticResource ToolbarButtonStyle}"
-                        Margin="0,0,2,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click">
-                    <Viewbox Width="18" Height="18">
+                        Margin="0,0,4,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click">
+                    <Viewbox Width="20" Height="20">
                         <Path Data="{StaticResource IconBookmarks}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
                 <Button x:Name="HistoryButton" Style="{StaticResource ToolbarButtonStyle}"
-                        Margin="0,0,2,0" ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click">
-                    <Viewbox Width="18" Height="18">
+                        Margin="0,0,4,0" ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click">
+                    <Viewbox Width="20" Height="20">
                         <Path Data="{StaticResource IconHistory}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
                 <Button x:Name="DownloadsButton" Style="{StaticResource ToolbarButtonStyle}"
                         ToolTip="{x:Static res:Strings.DownloadsTooltip}" Click="DownloadsButton_Click">
-                    <Viewbox Width="18" Height="18">
+                    <Viewbox Width="20" Height="20">
                         <Path Data="{StaticResource IconDownload}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
