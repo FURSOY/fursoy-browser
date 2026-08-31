@@ -34,6 +34,18 @@ public static class Strings
 
     public static string ClearHistory => GetString("ClearHistory");
 
+    public static string Downloads => GetString("Downloads");
+
+    public static string DownloadsEmpty => GetString("DownloadsEmpty");
+
+    public static string DownloadsTooltip => GetString("DownloadsTooltip");
+
+    public static string DownloadComplete => GetString("DownloadComplete");
+
+    public static string DownloadCancelled => GetString("DownloadCancelled");
+
+    public static string NewTabSearchPlaceholder => GetString("NewTabSearchPlaceholder");
+
     public static string AppTitle => GetString("AppTitle");
 
     private static string GetString(string name) =>

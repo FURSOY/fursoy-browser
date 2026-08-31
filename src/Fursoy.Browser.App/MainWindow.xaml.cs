@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using CefSharp;
@@ -10,11 +12,10 @@ namespace Fursoy.Browser.App;
 
 public partial class MainWindow : Window
 {
-    private const string HomeAddress = "https://www.google.com";
-
     private readonly ObservableCollection<TabItem> _tabs = new();
     private readonly BookmarkStore _bookmarkStore = new();
     private readonly HistoryStore _historyStore = new();
+    private readonly AppDownloadHandler _downloadHandler = new();
     private TabItem? _activeTab;
 
     public MainWindow()
@@ -22,14 +23,18 @@ public partial class MainWindow : Window
         InitializeComponent();
         TabStrip.ItemsSource = _tabs;
         BookmarksList.ItemsSource = _bookmarkStore.Bookmarks;
+        BookmarksBarList.ItemsSource = _bookmarkStore.Bookmarks;
         HistoryList.ItemsSource = _historyStore.Entries;
+        DownloadsList.ItemsSource = _downloadHandler.Downloads;
         _bookmarkStore.Bookmarks.CollectionChanged += (_, _) => UpdateBookmarksEmptyState();
         _historyStore.Entries.CollectionChanged += (_, _) => UpdateHistoryEmptyState();
+        _downloadHandler.Downloads.CollectionChanged += (_, _) => UpdateDownloadsEmptyState();
         UpdateBookmarksEmptyState();
         UpdateHistoryEmptyState();
+        UpdateDownloadsEmptyState();
         StateChanged += MainWindow_StateChanged;
 
-        AddTab(HomeAddress);
+        AddTab();
     }
 
     private void MainWindow_StateChanged(object? sender, EventArgs e)
@@ -42,15 +47,17 @@ public partial class MainWindow : Window
         MaximizeButton.Content = WindowState == WindowState.Maximized ? "\uE923" : "\uE922";
     }
 
-    private TabItem AddTab(string address)
+    private static bool IsNewTabAddress(string address) => address.StartsWith("data:", StringComparison.OrdinalIgnoreCase);
+
+    private TabItem AddTab(string? address = null)
     {
-        var tab = new TabItem(address);
+        var tab = new TabItem();
         tab.Browser.AddressChanged += (_, e) => Dispatcher.Invoke(() =>
         {
             tab.Address = e.NewValue as string ?? string.Empty;
             if (tab == _activeTab)
             {
-                AddressBar.Text = tab.Address;
+                AddressBar.Text = IsNewTabAddress(tab.Address) ? string.Empty : tab.Address;
                 StarButton.IsChecked = _bookmarkStore.Contains(tab.Address);
             }
         });
@@ -64,11 +71,23 @@ public partial class MainWindow : Window
             Dispatcher.Invoke(() => _historyStore.Add(tab.Address, tab.Title));
         };
 
+        tab.Browser.DownloadHandler = _downloadHandler;
+
         BrowserHost.Children.Add(tab.Browser);
         tab.Browser.Visibility = Visibility.Collapsed;
 
         _tabs.Add(tab);
         SwitchTab(tab);
+
+        if (string.IsNullOrEmpty(address))
+        {
+            tab.Browser.LoadHtml(NewTabPage.BuildHtml(_bookmarkStore.Bookmarks));
+        }
+        else
+        {
+            tab.Browser.Address = address;
+        }
+
         return tab;
     }
 
@@ -125,7 +144,7 @@ public partial class MainWindow : Window
         _activeTab.Browser.Address = address;
     }
 
-    private void NewTabButton_Click(object sender, RoutedEventArgs e) => AddTab(HomeAddress);
+    private void NewTabButton_Click(object sender, RoutedEventArgs e) => AddTab();
 
     private void TabBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
@@ -177,9 +196,17 @@ public partial class MainWindow : Window
         if (_activeTab != null) StarButton.IsChecked = _bookmarkStore.Contains(_activeTab.Address);
     }
 
+    private void BookmarksBarItem_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: Bookmark bookmark } || _activeTab == null) return;
+        _activeTab.Browser.Address = bookmark.Url;
+    }
+
     private void UpdateBookmarksEmptyState()
     {
-        BookmarksEmptyText.Visibility = _bookmarkStore.Bookmarks.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        var hasBookmarks = _bookmarkStore.Bookmarks.Count > 0;
+        BookmarksEmptyText.Visibility = hasBookmarks ? Visibility.Collapsed : Visibility.Visible;
+        BookmarksBar.Visibility = hasBookmarks ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void HistoryButton_Click(object sender, RoutedEventArgs e)
@@ -205,6 +232,25 @@ public partial class MainWindow : Window
     private void UpdateHistoryEmptyState()
     {
         HistoryEmptyText.Visibility = _historyStore.Entries.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void DownloadsButton_Click(object sender, RoutedEventArgs e)
+    {
+        DownloadsPopup.IsOpen = !DownloadsPopup.IsOpen;
+    }
+
+    private void DownloadRow_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: DownloadEntry entry }) return;
+        if (!entry.IsComplete || !File.Exists(entry.FullPath)) return;
+
+        Process.Start(new ProcessStartInfo(entry.FullPath) { UseShellExecute = true });
+        DownloadsPopup.IsOpen = false;
+    }
+
+    private void UpdateDownloadsEmptyState()
+    {
+        DownloadsEmptyText.Visibility = _downloadHandler.Downloads.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;

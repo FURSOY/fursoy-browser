@@ -8,12 +8,10 @@
         olan özellikleri (Width/Height/FontSize vb.) ez. Renkler daima
         Colors.xaml'deki kaynaklardan gelir, burada asla ham hex kullanılmaz.
 
-        Tasarım dili: "dolgun/yuvarlak" mobil dili (Listonic vb.) — büyük
-        köşe yuvarlaklığı, daire/hap (pill) şeklinde butonlar, ferah dokunma
-        alanları, kalın (SemiBold) başlık tipografisi. Gösterişli
-        gölge/kabartma yok; hiyerarşi renk + boyut + yuvarlaklıkla kurulur.
-        CornerRadius="999" bilerek abartılı verilir — WPF bunu otomatik
-        olarak elemanın yüksekliğine göre tam hap/daire şekline kırpar.
+        Tasarım dili: Chrome'un kendi geometrisi (küçük kare-ye yakın ikon
+        butonlar, üstten hafif yuvarlak sekmeler, hap şeklinde adres çubuğu,
+        köşesiz pencere kontrolleri) — tek fark renk paletimiz (#13ABBB vurgu,
+        siyah/koyu zemin). Şekil/boyut Chrome'a sadık kalır, renk bize ait.
     -->
 
     <DropShadowEffect x:Key="HoverShadowEffect" Color="{StaticResource SoftShadowColor}"
@@ -22,26 +20,24 @@
     <DropShadowEffect x:Key="FocusGlowEffect" Color="{StaticResource AccentColor}"
                        Direction="0" ShadowDepth="0" BlurRadius="10" Opacity="0.5" />
 
-    <!-- Daire/hap şeklinde ikon butonları: araç çubuğu, yeni sekme, sekme kapatma. -->
+    <!-- Küçük, hafif yuvarlatılmış kare ikon butonları: Chrome'un araç çubuğu butonları. -->
     <Style x:Key="BaseIconButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="999">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bg" Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
-                            <Setter TargetName="Bg" Property="Effect" Value="{StaticResource HoverShadowEffect}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="Bg" Property="Background" Value="{StaticResource SurfacePressedBrush}" />
-                            <Setter TargetName="Bg" Property="Effect" Value="{x:Null}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -49,18 +45,17 @@
         </Setter>
     </Style>
 
-    <!-- Pencere kontrolleri (min/max/close): sistem kuralına uyar, içerik butonları kadar yuvarlak değil. -->
+    <!-- Pencere kontrolleri (min/max/close): Windows/Chrome kuralı — dikdörtgen, köşesiz. -->
     <Style x:Key="TitleBarButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
         <Setter Property="Width" Value="46" />
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Height" Value="36" />
         <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
         <Setter Property="FontSize" Value="10" />
         <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="10">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -77,48 +72,37 @@
     </Style>
 
     <Style x:Key="ToolbarButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
-        <Setter Property="Width" Value="36" />
-        <Setter Property="Height" Value="36" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Width" Value="28" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
     </Style>
 
     <Style x:Key="NewTabButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
-        <Setter Property="Width" Value="36" />
-        <Setter Property="Height" Value="36" />
-        <Setter Property="FontSize" Value="18" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
     </Style>
 
+    <!-- Sekme kapatma çarpısı: Chrome'da hover'da dairesel bir vurgu alır (tek istisna). -->
     <Style x:Key="TabCloseButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
-        <Setter Property="Width" Value="22" />
-        <Setter Property="Height" Value="22" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="9" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
-    </Style>
-
-    <!-- Vurgu (accent) rengini kullanan tek buton türü: birincil eylemler için, tam hap (pill) formunda. -->
-    <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
-        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextOnAccentBrush}" />
-        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="999">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           Margin="18,9" />
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentHoverBrush}" />
-                            <Setter TargetName="Bg" Property="Effect" Value="{StaticResource HoverShadowEffect}" />
+                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentPressedBrush}" />
-                            <Setter TargetName="Bg" Property="Effect" Value="{x:Null}" />
+                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource SurfacePressedBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -126,30 +110,53 @@
         </Setter>
     </Style>
 
-    <!-- Yıldız (yer imi) düğmesi: kapalıyken soluk, işaretliyken vurgu renginde tek yıldız glifi. -->
+    <!-- Vurgu (accent) rengini kullanan tek buton türü: birincil eylemler için. -->
+    <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
+        <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextOnAccentBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="6">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Margin="16,8" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentHoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentPressedBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Yıldız (yer imi) düğmesi: diğer araç çubuğu ikonlarıyla aynı boyut/şekil, sadece işaretliyken vurgu rengi. -->
     <Style x:Key="StarToggleButtonStyle" TargetType="ToggleButton">
-        <Setter Property="Width" Value="36" />
-        <Setter Property="Height" Value="36" />
-        <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+        <Setter Property="Width" Value="28" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="999">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bg" Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
-                            <Setter TargetName="Bg" Property="Effect" Value="{StaticResource HoverShadowEffect}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="Bg" Property="Background" Value="{StaticResource SurfacePressedBrush}" />
-                            <Setter TargetName="Bg" Property="Effect" Value="{x:Null}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
@@ -160,7 +167,7 @@
         </Setter>
     </Style>
 
-    <!-- Yer imleri listesindeki her satır: tıklanınca gider, üstüne gelince hafif vurgu. -->
+    <!-- Açılır listelerdeki (yer imleri/geçmiş/indirilenler) her satır: tıklanınca gider, üstüne gelince hafif vurgu. -->
     <Style x:Key="BookmarkRowStyle" TargetType="Border">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Cursor" Value="Hand" />
@@ -169,6 +176,32 @@
                 <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- Yer imleri çubuğundaki her bir kısayol (chip): küçük, düz, metin ağırlıklı. -->
+    <Style x:Key="BookmarkChipStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="8,3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Margin="{TemplateBinding Padding}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                            <Setter TargetName="Bg" Property="TextElement.Foreground" Value="{StaticResource TextPrimaryBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- Metin bağlantısı görünümünde küçük yardımcı buton (örn. "Temizle"). -->
@@ -183,7 +216,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="8">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="4">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
                                            Margin="{TemplateBinding Padding}" />
                     </Border>
@@ -197,14 +230,14 @@
         </Setter>
     </Style>
 
-    <!-- Adres çubuğu: tam hap (pill) formunda arama kutusu görünümü. -->
+    <!-- Adres çubuğu: Chrome'un omnibox'ı gibi tam hap (pill) formunda arama kutusu. -->
     <Style x:Key="AddressBarStyle" TargetType="TextBox">
         <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
         <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Padding" Value="16,4" />
+        <Setter Property="Padding" Value="14,4" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Style.Resources>
@@ -221,20 +254,20 @@
     </Style>
 
     <!--
-        Sekme şeridindeki her sekmenin çerçevesi: klasik "sayfaya bağlı" sekme
-        yerine, toolbar'ın üstünde duran, tüm köşeleri yuvarlak, hap benzeri
-        bir "chip". Aktifken vurgu renginde ince bir alt çizgi kazanır.
+        Sekme şeridindeki her sekmenin çerçevesi: Chrome'daki gibi yalnızca
+        üst köşeleri yuvarlak, alt kenarı araç çubuğuna kaynaşık düz bir
+        "kart". Aktifken vurgu renginde ince bir üst çizgi kazanır — renk
+        paletimizin tek ayırt edici dokunuşu.
     -->
     <Style x:Key="TabBorderStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Effect" Value="{x:Null}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
             </Trigger>
             <DataTrigger Binding="{Binding IsActive}" Value="True">
-                <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
+                <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
                 <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
             </DataTrigger>
         </Style.Triggers>

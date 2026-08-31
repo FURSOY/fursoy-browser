@@ -32,10 +32,9 @@ public class TabItem : INotifyPropertyChanged
         set => SetField(ref _isActive, value);
     }
 
-    public TabItem(string initialAddress)
+    public TabItem()
     {
-        Address = initialAddress;
-        Browser = new ChromiumWebBrowser(initialAddress);
+        Browser = new ChromiumWebBrowser();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

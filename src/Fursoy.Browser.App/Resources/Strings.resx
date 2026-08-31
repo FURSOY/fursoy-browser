@@ -85,6 +85,24 @@
   <data name="ClearHistory" xml:space="preserve">
     <value>Temizle</value>
   </data>
+  <data name="Downloads" xml:space="preserve">
+    <value>İndirilenler</value>
+  </data>
+  <data name="DownloadsEmpty" xml:space="preserve">
+    <value>Henüz indirme yok</value>
+  </data>
+  <data name="DownloadsTooltip" xml:space="preserve">
+    <value>İndirilenler</value>
+  </data>
+  <data name="DownloadComplete" xml:space="preserve">
+    <value>Tamamlandı</value>
+  </data>
+  <data name="DownloadCancelled" xml:space="preserve">
+    <value>İptal edildi</value>
+  </data>
+  <data name="NewTabSearchPlaceholder" xml:space="preserve">
+    <value>Google'da ara veya bir adres yaz</value>
+  </data>
   <data name="AppTitle" xml:space="preserve">
     <value>FURSOY Browser</value>
   </data>

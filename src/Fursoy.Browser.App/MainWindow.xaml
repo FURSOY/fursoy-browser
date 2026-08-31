@@ -8,13 +8,13 @@
         WindowStyle="None" ResizeMode="CanResize">
 
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="88" GlassFrameThickness="0" CornerRadius="0"
+        <shell:WindowChrome CaptionHeight="76" GlassFrameThickness="0" CornerRadius="0"
                              ResizeBorderThickness="5" UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
     <DockPanel x:Name="RootPanel">
         <!-- Tab strip + window controls -->
-        <Grid DockPanel.Dock="Top" Height="44" Background="{StaticResource BackgroundBrush}">
+        <Grid DockPanel.Dock="Top" Height="36" Background="{StaticResource BackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -30,18 +30,17 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border x:Name="TabBorder" Width="200" Height="34" Margin="3,5,0,0" CornerRadius="16"
-                                        BorderThickness="0,0,0,3" Style="{StaticResource TabBorderStyle}"
+                                <Border x:Name="TabBorder" Width="220" Height="30" Margin="2,6,0,0" CornerRadius="8,8,0,0"
+                                        BorderThickness="0,2,0,0" Style="{StaticResource TabBorderStyle}"
                                         MouseLeftButtonUp="TabBorder_MouseLeftButtonUp" Tag="{Binding}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="26" />
+                                            <ColumnDefinition Width="24" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="14,0,0,0"
+                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="12,0,0,0"
                                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Foreground="{StaticResource TextPrimaryBrush}" FontSize="12"
-                                                   FontWeight="SemiBold" />
+                                                   Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
                                         <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
                                                 Click="CloseTabButton_Click" Tag="{Binding}" />
                                     </Grid>
@@ -50,7 +49,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Button Content="+" Style="{StaticResource NewTabButtonStyle}" Margin="6,4,0,0"
+                    <Button Content="+" Style="{StaticResource NewTabButtonStyle}" Margin="4,3,0,0"
                             Click="NewTabButton_Click" />
                 </StackPanel>
             </ScrollViewer>
@@ -63,7 +62,7 @@
         </Grid>
 
         <!-- Navigation toolbar -->
-        <Grid DockPanel.Dock="Top" Height="44" Background="{StaticResource SurfaceBrush}">
+        <Grid DockPanel.Dock="Top" Height="40" Background="{StaticResource SurfaceBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -71,30 +70,50 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="8,0" VerticalAlignment="Center">
-                <Button Content="&#8592;" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,6,0" Click="BackButton_Click" />
-                <Button Content="&#8594;" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,6,0" Click="ForwardButton_Click" />
+                <Button Content="&#8592;" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="BackButton_Click" />
+                <Button Content="&#8594;" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="ForwardButton_Click" />
                 <Button Content="&#8635;" Style="{StaticResource ToolbarButtonStyle}" Click="ReloadButton_Click" />
             </StackPanel>
 
-            <TextBox x:Name="AddressBar" Grid.Column="1" Margin="6,6,10,6" Style="{StaticResource AddressBarStyle}"
+            <TextBox x:Name="AddressBar" Grid.Column="1" Margin="4,6" Style="{StaticResource AddressBarStyle}"
                      KeyDown="AddressBar_KeyDown" />
 
             <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,8,0" VerticalAlignment="Center">
                 <ToggleButton x:Name="StarButton" Content="&#9733;" Style="{StaticResource StarToggleButtonStyle}"
-                              Margin="0,0,6,0" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
+                              Margin="0,0,2,0" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
                               Click="StarButton_Click" />
                 <Button x:Name="BookmarksButton" Content="&#9776;" Style="{StaticResource ToolbarButtonStyle}"
-                        Margin="0,0,6,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click" />
+                        Margin="0,0,2,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click" />
                 <Button x:Name="HistoryButton" Content="&#8634;" Style="{StaticResource ToolbarButtonStyle}"
-                        ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click" />
+                        Margin="0,0,2,0" ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click" />
+                <Button x:Name="DownloadsButton" Content="&#8595;" Style="{StaticResource ToolbarButtonStyle}"
+                        ToolTip="{x:Static res:Strings.DownloadsTooltip}" Click="DownloadsButton_Click" />
             </StackPanel>
         </Grid>
+
+        <!-- Yer imleri çubuğu: yer imi yoksa gizlenir -->
+        <StackPanel x:Name="BookmarksBar" DockPanel.Dock="Top" Orientation="Horizontal" Height="28"
+                    Background="{StaticResource SurfaceBrush}" Margin="6,0">
+            <ItemsControl x:Name="BookmarksBarList" VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Title}" Style="{StaticResource BookmarkChipStyle}"
+                                Click="BookmarksBarItem_Click" Tag="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
 
         <!-- Yer imleri açılır listesi -->
         <Popup x:Name="BookmarksPopup" PlacementTarget="{Binding ElementName=BookmarksButton}"
                Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
             <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1" CornerRadius="14" Padding="8" MinWidth="280" MaxWidth="360">
+                    BorderThickness="1" CornerRadius="8" Padding="8" MinWidth="280" MaxWidth="360">
                 <StackPanel>
                     <TextBlock Text="{x:Static res:Strings.Bookmarks}" FontWeight="SemiBold" FontSize="13"
                                Margin="8,4,8,8" Foreground="{StaticResource TextPrimaryBrush}" />
@@ -105,7 +124,7 @@
                         <ItemsControl x:Name="BookmarksList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="10" Padding="8,6" Margin="0,1"
+                                    <Border CornerRadius="6" Padding="8,6" Margin="0,1"
                                             Style="{StaticResource BookmarkRowStyle}"
                                             MouseLeftButtonUp="BookmarkRow_MouseLeftButtonUp" Tag="{Binding}">
                                         <Grid>
@@ -137,7 +156,7 @@
         <Popup x:Name="HistoryPopup" PlacementTarget="{Binding ElementName=HistoryButton}"
                Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
             <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1" CornerRadius="14" Padding="8" MinWidth="280" MaxWidth="360">
+                    BorderThickness="1" CornerRadius="8" Padding="8" MinWidth="280" MaxWidth="360">
                 <StackPanel>
                     <Grid Margin="8,4,4,8">
                         <TextBlock Text="{x:Static res:Strings.History}" FontWeight="SemiBold" FontSize="13"
@@ -152,7 +171,7 @@
                         <ItemsControl x:Name="HistoryList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="10" Padding="8,6" Margin="0,1"
+                                    <Border CornerRadius="6" Padding="8,6" Margin="0,1"
                                             Style="{StaticResource BookmarkRowStyle}"
                                             MouseLeftButtonUp="HistoryRow_MouseLeftButtonUp" Tag="{Binding}">
                                         <Grid>
@@ -171,6 +190,43 @@
                                             <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
                                                     Click="RemoveHistoryButton_Click" Tag="{Binding}" />
                                         </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <!-- İndirilenler açılır listesi -->
+        <Popup x:Name="DownloadsPopup" PlacementTarget="{Binding ElementName=DownloadsButton}"
+               Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="8" MinWidth="300" MaxWidth="380">
+                <StackPanel>
+                    <TextBlock Text="{x:Static res:Strings.Downloads}" FontWeight="SemiBold" FontSize="13"
+                               Margin="8,4,8,8" Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock x:Name="DownloadsEmptyText" Text="{x:Static res:Strings.DownloadsEmpty}"
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                               Margin="8,0,8,8" />
+                    <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl x:Name="DownloadsList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="6" Padding="10,8" Margin="0,1"
+                                            Style="{StaticResource BookmarkRowStyle}"
+                                            MouseLeftButtonUp="DownloadRow_MouseLeftButtonUp" Tag="{Binding}">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" FontSize="12"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Minimum="0" Maximum="100"
+                                                         Height="4" Margin="0,6,0,4" Background="{StaticResource SurfaceAltBrush}"
+                                                         Foreground="{StaticResource AccentBrush}" BorderThickness="0" />
+                                            <TextBlock Text="{Binding StatusText}" FontSize="10"
+                                                       Foreground="{StaticResource TextSecondaryBrush}" />
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
