@@ -3,6 +3,14 @@
 
     <!--
         FURSOY Browser renk paleti.
+
+        Tasarım dili: Fluent (Windows 11 / Edge) taban + yumuşak kabartma
+        (neumorphism) dokunuşları. Net kontrast ve katmanlı, ince kenarlıklı
+        yüzeyler Fluent'ten; hover/aktif durumlarda görülen yumuşak dış/iç
+        gölgeler neumorphism'den gelir — ama hiçbir yerde neumorphism'in tek
+        tonlu düşük kontrast tuzağına düşülmez, metin/ikon rengi zeminden
+        her zaman net ayrışır.
+
         Tek vurgu (accent) rengi: #13ABBB. Bu renk yalnızca vurgu/etkileşim
         noktalarında (aktif sekme çizgisi, odaklı adres çubuğu kenarlığı,
         birincil buton, hover/seçim işaretleri) kullanılır — asla büyük bir
@@ -18,8 +26,16 @@
 
     <Color x:Key="BackgroundColor">#000000</Color>
     <Color x:Key="SurfaceColor">#151617</Color>
+    <Color x:Key="SurfaceHoverColor">#191A1C</Color>
     <Color x:Key="SurfaceAltColor">#1C1D1F</Color>
+    <Color x:Key="SurfacePressedColor">#0E0F10</Color>
     <Color x:Key="BorderColor">#2A2B2D</Color>
+
+    <!-- Fluent katman çizgisi: yüzeylerin üst kenarında ince, yarı saydam bir "rim light". -->
+    <Color x:Key="HighlightRimColor">#14FFFFFF</Color>
+
+    <!-- Neumorphism dokunuşu: hover/aktif durumlarda kullanılan yumuşak dış gölge. -->
+    <Color x:Key="SoftShadowColor">#000000</Color>
 
     <Color x:Key="TextPrimaryColor">#F2F2F2</Color>
     <Color x:Key="TextSecondaryColor">#9A9C9E</Color>
@@ -31,8 +47,11 @@
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="{StaticResource SurfaceHoverColor}" />
     <SolidColorBrush x:Key="SurfaceAltBrush" Color="{StaticResource SurfaceAltColor}" />
+    <SolidColorBrush x:Key="SurfacePressedBrush" Color="{StaticResource SurfacePressedColor}" />
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="HighlightRimBrush" Color="{StaticResource HighlightRimColor}" />
 
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />

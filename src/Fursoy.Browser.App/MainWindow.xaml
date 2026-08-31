@@ -8,13 +8,13 @@
         WindowStyle="None" ResizeMode="CanResize">
 
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="80" GlassFrameThickness="0" CornerRadius="0"
+        <shell:WindowChrome CaptionHeight="88" GlassFrameThickness="0" CornerRadius="0"
                              ResizeBorderThickness="5" UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
     <DockPanel x:Name="RootPanel">
         <!-- Tab strip + window controls -->
-        <Grid DockPanel.Dock="Top" Height="40" Background="{StaticResource BackgroundBrush}">
+        <Grid DockPanel.Dock="Top" Height="44" Background="{StaticResource BackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -30,38 +30,27 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border x:Name="TabBorder" Width="200" Height="34" Margin="2,4,0,0" CornerRadius="6,6,0,0"
-                                        BorderThickness="0,0,0,2"
+                                <Border x:Name="TabBorder" Width="200" Height="34" Margin="3,5,0,0" CornerRadius="16"
+                                        BorderThickness="0,0,0,3" Style="{StaticResource TabBorderStyle}"
                                         MouseLeftButtonUp="TabBorder_MouseLeftButtonUp" Tag="{Binding}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="24" />
+                                            <ColumnDefinition Width="26" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="10,0,0,0"
+                                        <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="14,0,0,0"
                                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
-                                                   Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
+                                                   Foreground="{StaticResource TextPrimaryBrush}" FontSize="12"
+                                                   FontWeight="SemiBold" />
                                         <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
                                                 Click="CloseTabButton_Click" Tag="{Binding}" />
                                     </Grid>
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-                                            <Setter Property="BorderBrush" Value="Transparent" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                    <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
-                                                    <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                    <Button Content="+" Style="{StaticResource NewTabButtonStyle}" Margin="4,4,0,0"
+                    <Button Content="+" Style="{StaticResource NewTabButtonStyle}" Margin="6,4,0,0"
                             Click="NewTabButton_Click" />
                 </StackPanel>
             </ScrollViewer>
@@ -74,19 +63,19 @@
         </Grid>
 
         <!-- Navigation toolbar -->
-        <Grid DockPanel.Dock="Top" Height="40" Background="{StaticResource SurfaceBrush}">
+        <Grid DockPanel.Dock="Top" Height="44" Background="{StaticResource SurfaceBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="6,0" VerticalAlignment="Center">
-                <Button Content="&#8592;" Style="{StaticResource ToolbarButtonStyle}" Click="BackButton_Click" />
-                <Button Content="&#8594;" Style="{StaticResource ToolbarButtonStyle}" Click="ForwardButton_Click" />
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="8,0" VerticalAlignment="Center">
+                <Button Content="&#8592;" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,6,0" Click="BackButton_Click" />
+                <Button Content="&#8594;" Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,6,0" Click="ForwardButton_Click" />
                 <Button Content="&#8635;" Style="{StaticResource ToolbarButtonStyle}" Click="ReloadButton_Click" />
             </StackPanel>
 
-            <TextBox x:Name="AddressBar" Grid.Column="1" Margin="4,6" Style="{StaticResource AddressBarStyle}"
+            <TextBox x:Name="AddressBar" Grid.Column="1" Margin="6,6,10,6" Style="{StaticResource AddressBarStyle}"
                      KeyDown="AddressBar_KeyDown" />
         </Grid>
 
