@@ -45,7 +45,7 @@
                                                 Style="{StaticResource TabCloseButtonStyle}" Visibility="Collapsed"
                                                 Click="CloseTabButton_Click" Tag="{Binding}">
                                             <Viewbox Width="12" Height="12">
-                                                <Path Data="{StaticResource IconClose}" Style="{StaticResource IconPathStyle}" />
+                                                <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
                                             </Viewbox>
                                         </Button>
                                     </Grid>
@@ -65,7 +65,7 @@
                     <Button Style="{StaticResource NewTabButtonStyle}" Width="30" Height="42" Margin="0"
                             Click="NewTabButton_Click">
                         <Viewbox Width="16" Height="16">
-                            <Path Data="{StaticResource IconAdd}" Style="{StaticResource IconPathStyle}" />
+                            <Path Data="{StaticResource IconAdd}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                         </Viewbox>
                     </Button>
                 </StackPanel>
@@ -89,17 +89,17 @@
             <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="8,0" VerticalAlignment="Center">
                 <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="BackButton_Click">
                     <Viewbox Width="18" Height="18">
-                        <Path Data="{StaticResource IconBack}" Style="{StaticResource IconPathStyle}" />
+                        <Path Data="{StaticResource IconBack}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
                 <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,2,0" Click="ForwardButton_Click">
                     <Viewbox Width="18" Height="18">
-                        <Path Data="{StaticResource IconForward}" Style="{StaticResource IconPathStyle}" />
+                        <Path Data="{StaticResource IconForward}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
                 <Button Style="{StaticResource ToolbarButtonStyle}" Click="ReloadButton_Click">
                     <Viewbox Width="18" Height="18">
-                        <Path Data="{StaticResource IconRefresh}" Style="{StaticResource IconPathStyle}" />
+                        <Path Data="{StaticResource IconRefresh}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
             </StackPanel>
@@ -112,7 +112,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Viewbox Grid.Column="0" Width="15" Height="15" Margin="0,0,8,0">
-                        <Path Data="{StaticResource IconSearch}" Fill="{StaticResource TextSecondaryBrush}" />
+                        <Path Data="{StaticResource IconSearch}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                     <TextBox x:Name="AddressBar" Grid.Column="1" Style="{StaticResource AddressBarStyle}"
                              KeyDown="AddressBar_KeyDown" />
@@ -124,25 +124,35 @@
                               Margin="0,0,2,0" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
                               Click="StarButton_Click">
                     <Viewbox Width="18" Height="18">
-                        <Path Data="{StaticResource IconStar}" Style="{StaticResource IconPathStyle}" />
+                        <Path Data="{StaticResource IconStar}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=StarButton}" Value="True">
+                                            <Setter Property="Fill" Value="{StaticResource AccentBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
                     </Viewbox>
                 </ToggleButton>
                 <Button x:Name="BookmarksButton" Style="{StaticResource ToolbarButtonStyle}"
                         Margin="0,0,2,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click">
                     <Viewbox Width="18" Height="18">
-                        <Path Data="{StaticResource IconBookmarks}" Style="{StaticResource IconPathStyle}" />
+                        <Path Data="{StaticResource IconBookmarks}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
                 <Button x:Name="HistoryButton" Style="{StaticResource ToolbarButtonStyle}"
                         Margin="0,0,2,0" ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click">
                     <Viewbox Width="18" Height="18">
-                        <Path Data="{StaticResource IconHistory}" Style="{StaticResource IconPathStyle}" />
+                        <Path Data="{StaticResource IconHistory}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
                 <Button x:Name="DownloadsButton" Style="{StaticResource ToolbarButtonStyle}"
                         ToolTip="{x:Static res:Strings.DownloadsTooltip}" Click="DownloadsButton_Click">
                     <Viewbox Width="18" Height="18">
-                        <Path Data="{StaticResource IconDownload}" Style="{StaticResource IconPathStyle}" />
+                        <Path Data="{StaticResource IconDownload}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
             </StackPanel>
@@ -200,7 +210,7 @@
                                             <Button Grid.Column="1" Style="{StaticResource TabCloseButtonStyle}"
                                                     Click="RemoveBookmarkButton_Click" Tag="{Binding}">
                                                 <Viewbox Width="12" Height="12">
-                                                    <Path Data="{StaticResource IconClose}" Style="{StaticResource IconPathStyle}" />
+                                                    <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
                                                 </Viewbox>
                                             </Button>
                                         </Grid>
@@ -251,7 +261,7 @@
                                             <Button Grid.Column="1" Style="{StaticResource TabCloseButtonStyle}"
                                                     Click="RemoveHistoryButton_Click" Tag="{Binding}">
                                                 <Viewbox Width="12" Height="12">
-                                                    <Path Data="{StaticResource IconClose}" Style="{StaticResource IconPathStyle}" />
+                                                    <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
                                                 </Viewbox>
                                             </Button>
                                         </Grid>
