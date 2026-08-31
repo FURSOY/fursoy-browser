@@ -261,14 +261,12 @@
     -->
     <Style x:Key="TabBorderStyle" TargetType="Border">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="Transparent" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
             </Trigger>
             <DataTrigger Binding="{Binding IsActive}" Value="True">
                 <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>

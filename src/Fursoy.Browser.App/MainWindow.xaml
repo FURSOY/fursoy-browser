@@ -30,8 +30,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border x:Name="TabBorder" Width="220" Height="42" Margin="2,0,0,0" CornerRadius="8,8,0,0"
-                                        BorderThickness="0,2,0,0" Style="{StaticResource TabBorderStyle}"
+                                <Border x:Name="TabBorder" Width="220" Height="42" CornerRadius="10,10,0,0"
+                                        Style="{StaticResource TabBorderStyle}"
                                         MouseLeftButtonUp="TabBorder_MouseLeftButtonUp" Tag="{Binding}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -41,10 +41,19 @@
                                         <TextBlock Text="{Binding Title}" Grid.Column="0" Margin="14,0,0,0"
                                                    VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                                                    Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
-                                        <Button Grid.Column="1" Content="&#10005;" Style="{StaticResource TabCloseButtonStyle}"
+                                        <Button x:Name="CloseBtn" Grid.Column="1" Content="&#10005;"
+                                                Style="{StaticResource TabCloseButtonStyle}" Visibility="Collapsed"
                                                 Click="CloseTabButton_Click" Tag="{Binding}" />
                                     </Grid>
                                 </Border>
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="TabBorder" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="CloseBtn" Property="Visibility" Value="Visible" />
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                        <Setter TargetName="CloseBtn" Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
