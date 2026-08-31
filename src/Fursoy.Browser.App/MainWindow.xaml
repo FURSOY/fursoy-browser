@@ -30,7 +30,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border x:Name="TabBorder" Width="220" Height="42" CornerRadius="10,10,0,0"
+                                <Border x:Name="TabBorder" Width="256" Height="42" CornerRadius="10,10,0,0"
                                         Style="{StaticResource TabBorderStyle}"
                                         MouseLeftButtonUp="TabBorder_MouseLeftButtonUp" Tag="{Binding}">
                                     <Grid>
@@ -104,8 +104,20 @@
                 </Button>
             </StackPanel>
 
-            <TextBox x:Name="AddressBar" Grid.Column="1" Margin="4,6" Style="{StaticResource AddressBarStyle}"
-                     KeyDown="AddressBar_KeyDown" />
+            <Border Grid.Column="1" Margin="4,7" Padding="12,0" Style="{StaticResource AddressBarContainerStyle}"
+                    shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Viewbox Grid.Column="0" Width="15" Height="15" Margin="0,0,8,0">
+                        <Path Data="{StaticResource IconSearch}" Fill="{StaticResource TextSecondaryBrush}" />
+                    </Viewbox>
+                    <TextBox x:Name="AddressBar" Grid.Column="1" Style="{StaticResource AddressBarStyle}"
+                             KeyDown="AddressBar_KeyDown" />
+                </Grid>
+            </Border>
 
             <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,8,0" VerticalAlignment="Center">
                 <ToggleButton x:Name="StarButton" Style="{StaticResource StarToggleButtonStyle}"

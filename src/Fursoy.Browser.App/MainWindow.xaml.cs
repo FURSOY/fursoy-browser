@@ -35,6 +35,7 @@ public partial class MainWindow : Window
         UpdateHistoryEmptyState();
         UpdateDownloadsEmptyState();
         StateChanged += MainWindow_StateChanged;
+        MainWindow_StateChanged(this, EventArgs.Empty);
 
         AddTab();
     }

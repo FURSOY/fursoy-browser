@@ -237,26 +237,28 @@
     </Style>
 
     <!-- Adres çubuğu: Chrome'un omnibox'ı gibi tam hap (pill) formunda arama kutusu. -->
-    <Style x:Key="AddressBarStyle" TargetType="TextBox">
+    <!-- Adres çubuğu hap konteyneri: ikon + metin kutusunu tek bir Chrome-omnibox görünümünde sarar. -->
+    <Style x:Key="AddressBarContainerStyle" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Padding" Value="14,4" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
-        <Style.Resources>
-            <Style TargetType="Border">
-                <Setter Property="CornerRadius" Value="999" />
-            </Style>
-        </Style.Resources>
+        <Setter Property="CornerRadius" Value="999" />
         <Style.Triggers>
-            <Trigger Property="IsKeyboardFocused" Value="True">
+            <DataTrigger Binding="{Binding IsKeyboardFocused, ElementName=AddressBar}" Value="True">
                 <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
                 <Setter Property="Effect" Value="{StaticResource FocusGlowEffect}" />
-            </Trigger>
+            </DataTrigger>
         </Style.Triggers>
+    </Style>
+
+    <Style x:Key="AddressBarStyle" TargetType="TextBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0,4" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="shell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
     </Style>
 
     <!--
