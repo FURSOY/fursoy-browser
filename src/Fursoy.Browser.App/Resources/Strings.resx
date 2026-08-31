@@ -103,6 +103,21 @@
   <data name="NewTabSearchPlaceholder" xml:space="preserve">
     <value>Google'da ara veya bir adres yaz</value>
   </data>
+  <data name="AddressBarPlaceholder" xml:space="preserve">
+    <value>Google'da arayın veya URL'yi yazın</value>
+  </data>
+  <data name="TabSearchTooltip" xml:space="preserve">
+    <value>Sekmeleri ara</value>
+  </data>
+  <data name="MenuTooltip" xml:space="preserve">
+    <value>Ayarlar ve diğerleri</value>
+  </data>
+  <data name="ProfileTooltip" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="NewTabTooltip" xml:space="preserve">
+    <value>Yeni sekme</value>
+  </data>
   <data name="AppTitle" xml:space="preserve">
     <value>FURSOY Browser</value>
   </data>

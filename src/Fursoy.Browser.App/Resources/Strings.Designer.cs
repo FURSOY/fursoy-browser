@@ -46,6 +46,16 @@ public static class Strings
 
     public static string NewTabSearchPlaceholder => GetString("NewTabSearchPlaceholder");
 
+    public static string AddressBarPlaceholder => GetString("AddressBarPlaceholder");
+
+    public static string TabSearchTooltip => GetString("TabSearchTooltip");
+
+    public static string MenuTooltip => GetString("MenuTooltip");
+
+    public static string ProfileTooltip => GetString("ProfileTooltip");
+
+    public static string NewTabTooltip => GetString("NewTabTooltip");
+
     public static string AppTitle => GetString("AppTitle");
 
     private static string GetString(string name) =>

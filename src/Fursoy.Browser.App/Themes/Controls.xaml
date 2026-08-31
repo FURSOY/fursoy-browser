@@ -94,7 +94,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="999">
+                    <Border x:Name="Bg" Background="{TemplateBinding Background}" CornerRadius="8">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -236,7 +236,12 @@
         <Setter Property="Background" Value="{StaticResource SurfaceAltBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
-        <Setter Property="CornerRadius" Value="999" />
+        <!--
+            WPF'te Border yarıçapı yüksekliğin yarısına KIRPILMAZ; 999 gibi
+            abartılı bir değer hap değil elips çizdirir. Bu yüzden tam yarım
+            yükseklik verilir (araç çubuğu 46 - 2x6 kenar boşluğu = 34).
+        -->
+        <Setter Property="CornerRadius" Value="17" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding IsKeyboardFocused, ElementName=AddressBar}" Value="True">
                 <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
@@ -256,21 +261,11 @@
     </Style>
 
     <!--
-        Sekme şeridindeki her sekmenin çerçevesi: Chrome'daki gibi yalnızca
-        üst köşeleri yuvarlak, alt kenarı araç çubuğuna kaynaşık düz bir
-        "kart". Aktifken vurgu renginde ince bir üst çizgi kazanır — renk
-        paletimizin tek ayırt edici dokunuşu.
+        Sekme silueti Controls.xaml'da değil, Controls/TabShape.cs içinde
+        çizilir (Chrome'un alt köşeleri dışa açılan şekli düz bir Border ile
+        ifade edilemez). Dolgu rengi sekme şablonunun tetikleyicilerinden
+        gelir: pasif = şeffaf (şerit rengi), hover = SurfaceHoverBrush,
+        aktif = SurfaceBrush (araç çubuğuyla aynı, kaynaşsın diye).
     -->
-    <Style x:Key="TabBorderStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource TabInactiveBrush}" />
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
-            </Trigger>
-            <DataTrigger Binding="{Binding IsActive}" Value="True">
-                <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
 
 </ResourceDictionary>

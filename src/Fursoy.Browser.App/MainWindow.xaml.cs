@@ -102,6 +102,19 @@ public partial class MainWindow : Window
         tab.Browser.Visibility = Visibility.Visible;
         AddressBar.Text = IsNewTabAddress(tab.Address) ? string.Empty : tab.Address;
         StarButton.IsChecked = _bookmarkStore.Contains(tab.Address);
+        UpdateTabSeparators();
+    }
+
+    /// <summary>
+    /// Chrome yalnızca bitişik iki PASİF sekmenin arasına ayraç çizer;
+    /// aktif sekmeye komşu olan ayraçlar gizlenir.
+    /// </summary>
+    private void UpdateTabSeparators()
+    {
+        for (var i = 0; i < _tabs.Count; i++)
+        {
+            _tabs[i].ShowLeftSeparator = i > 0 && !_tabs[i].IsActive && !_tabs[i - 1].IsActive;
+        }
     }
 
     private void CloseTab(TabItem tab)
@@ -124,6 +137,10 @@ public partial class MainWindow : Window
             _activeTab = null;
             var nextIndex = Math.Min(index, _tabs.Count - 1);
             SwitchTab(_tabs[nextIndex]);
+        }
+        else
+        {
+            UpdateTabSeparators();
         }
     }
 
@@ -249,6 +266,48 @@ public partial class MainWindow : Window
     private void UpdateDownloadsEmptyState()
     {
         DownloadsEmptyText.Visibility = _downloadHandler.Downloads.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void TabSearchButton_Click(object sender, RoutedEventArgs e)
+    {
+        TabSearchList.ItemsSource = _tabs;
+        TabSearchPopup.IsOpen = !TabSearchPopup.IsOpen;
+    }
+
+    private void TabSearchRow_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not FrameworkElement { Tag: TabItem tab }) return;
+        SwitchTab(tab);
+        TabSearchPopup.IsOpen = false;
+    }
+
+    private void MenuButton_Click(object sender, RoutedEventArgs e)
+    {
+        MenuPopup.IsOpen = !MenuPopup.IsOpen;
+    }
+
+    private void MenuNewTab_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        AddTab();
+    }
+
+    private void MenuBookmarks_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        BookmarksPopup.IsOpen = true;
+    }
+
+    private void MenuHistory_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        HistoryPopup.IsOpen = true;
+    }
+
+    private void MenuDownloads_Click(object sender, MouseButtonEventArgs e)
+    {
+        MenuPopup.IsOpen = false;
+        DownloadsPopup.IsOpen = true;
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;

@@ -36,7 +36,7 @@ public static class NewTabPage
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    background: #000000;
+                    background: #1F1F1F;
                     font-family: 'Segoe UI', sans-serif;
                     color: #F2F2F2;
                 }
@@ -56,8 +56,8 @@ public static class NewTabPage
                     box-sizing: border-box;
                     padding: 14px 20px;
                     border-radius: 999px;
-                    border: 1px solid #2A2B2D;
-                    background: #1C1D1F;
+                    border: 1px solid #4A4A4A;
+                    background: #2D2D2D;
                     color: #F2F2F2;
                     font-size: 15px;
                     outline: none;
@@ -76,13 +76,13 @@ public static class NewTabPage
                 .shortcut {
                     padding: 8px 16px;
                     border-radius: 6px;
-                    background: #151617;
+                    background: #2D2D2D;
                     color: #9A9C9E;
                     text-decoration: none;
                     font-size: 13px;
                 }
                 .shortcut:hover {
-                    background: #1C1D1F;
+                    background: #3C3C3C;
                     color: #F2F2F2;
                 }
             </style>

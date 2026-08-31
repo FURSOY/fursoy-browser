@@ -32,6 +32,18 @@ public class TabItem : INotifyPropertyChanged
         set => SetField(ref _isActive, value);
     }
 
+    /// <summary>
+    /// Chrome bitişik iki PASİF sekmenin arasına ince bir dikey ayraç çizer;
+    /// aktif sekmeye komşu olan ayraçlar gizlenir. Bu yüzden her sekme kendi
+    /// solundaki ayracın görünürlüğünü ayrı tutar.
+    /// </summary>
+    private bool _showLeftSeparator;
+    public bool ShowLeftSeparator
+    {
+        get => _showLeftSeparator;
+        set => SetField(ref _showLeftSeparator, value);
+    }
+
     public TabItem()
     {
         Browser = new ChromiumWebBrowser();
