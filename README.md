@@ -9,6 +9,7 @@ A personal hobby and exploration project: building a custom Windows desktop brow
 ![Framework](https://img.shields.io/badge/.NET-8.0-purple)
 ![Engine](https://img.shields.io/badge/engine-CefSharp%20%2F%20Chromium-green)
 ![Type](https://img.shields.io/badge/project-personal%20%2F%20hobby-orange)
+![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![Tests](https://img.shields.io/badge/smoke%20tests-273%20passed-brightgreen)
 
 ---
@@ -85,4 +86,4 @@ The project includes an automated smoke test suite (`Fursoy.Browser.SmokeTests`)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
