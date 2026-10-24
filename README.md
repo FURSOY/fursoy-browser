@@ -1,14 +1,15 @@
 # FURSOY Browser
 
-A personal hobby and exploration project: building a custom Windows desktop browser using **C#**, **.NET 8**, **WPF**, and **CefSharp** (embedded Chromium).
+**Experimental Desktop Browser Sandbox (.NET 8 · WPF · CefSharp · C#)**
 
-> **Note & Scope:**  
-> This is a personal sandbox / fun build exploring browser mechanics, custom UI vector geometry, and native Chromium embedding. It is not intended as a commercial browser replacement for daily drivers like Chrome or Firefox, but rather a hands-on exploration of how browser tabs, omnibox systems, session persistence, and Chromium handlers fit together.
+> [!NOTE]
+> **Project Scope: Exploratory Sandbox / Unfinished Prototype**  
+> This is a personal exploration sandbox built to study desktop browser mechanics, Chromium-accurate tab vector geometry, and embedded Chromium integration. **It is an experimental, unfinished prototype and is NOT intended as a daily-driver replacement for web browsers like Chrome, Edge, or Firefox.**
 
+![Status](https://img.shields.io/badge/status-experimental%20sandbox-orange)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-blue)
 ![Framework](https://img.shields.io/badge/.NET-8.0-purple)
 ![Engine](https://img.shields.io/badge/engine-CefSharp%20%2F%20Chromium-green)
-![Type](https://img.shields.io/badge/project-personal%20%2F%20hobby-orange)
 ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![Tests](https://img.shields.io/badge/smoke%20tests-273%20passed-brightgreen)
 
