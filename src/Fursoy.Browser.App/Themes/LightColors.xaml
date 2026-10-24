@@ -1,0 +1,45 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="AccentColor">#0B7585</Color>
+    <Color x:Key="AccentColorHover">#096575</Color>
+    <Color x:Key="AccentColorPressed">#075463</Color>
+    <Color x:Key="BackgroundColor">#DEE1E6</Color>
+    <Color x:Key="SurfaceColor">#FFFFFF</Color>
+    <Color x:Key="SurfaceHoverColor">#D3E3FD</Color>
+    <Color x:Key="SurfaceAltColor">#F1F3F4</Color>
+    <Color x:Key="SurfacePressedColor">#C2E7FF</Color>
+    <Color x:Key="BorderColor">#33000000</Color>
+    <Color x:Key="TabSeparatorColor">#A8AAAD</Color>
+    <Color x:Key="WindowBorderColor">#AEB4BE</Color>
+    <Color x:Key="HighlightRimColor">#66FFFFFF</Color>
+    <Color x:Key="SoftShadowColor">#000000</Color>
+    <DropShadowEffect x:Key="PopupElevationEffect" Color="#000000"
+                      Direction="270" ShadowDepth="5" BlurRadius="20" Opacity="0.30" />
+    <Color x:Key="TextPrimaryColor">#202124</Color>
+    <Color x:Key="TextSecondaryColor">#5F6368</Color>
+    <Color x:Key="TextOnAccentColor">#FFFFFF</Color>
+    <Color x:Key="OmniboxUrlColor">#1967D2</Color>
+    <Color x:Key="OmniboxSelectionColor">#1A73E8</Color>
+    <Color x:Key="DestructiveColor">#B3261E</Color>
+
+    <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{DynamicResource AccentColorHover}" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="{DynamicResource AccentColorPressed}" />
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{DynamicResource BackgroundColor}" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{DynamicResource SurfaceColor}" />
+    <SolidColorBrush x:Key="TabSeparatorBrush" Color="{DynamicResource TabSeparatorColor}" />
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="{DynamicResource WindowBorderColor}" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="{DynamicResource SurfaceHoverColor}" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="{DynamicResource SurfaceAltColor}" />
+    <SolidColorBrush x:Key="SurfacePressedBrush" Color="{DynamicResource SurfacePressedColor}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{DynamicResource BorderColor}" />
+    <SolidColorBrush x:Key="HighlightRimBrush" Color="{DynamicResource HighlightRimColor}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{DynamicResource TextPrimaryColor}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{DynamicResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="TextOnAccentBrush" Color="{DynamicResource TextOnAccentColor}" />
+    <SolidColorBrush x:Key="OmniboxUrlBrush" Color="{DynamicResource OmniboxUrlColor}" />
+    <SolidColorBrush x:Key="OmniboxSelectionBrush" Color="{DynamicResource OmniboxSelectionColor}" />
+    <SolidColorBrush x:Key="DestructiveBrush" Color="{DynamicResource DestructiveColor}" />
+
+</ResourceDictionary>

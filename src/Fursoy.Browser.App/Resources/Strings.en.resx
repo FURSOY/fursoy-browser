@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="NewTab" xml:space="preserve"><value>New Tab</value></data>
+  <data name="Bookmarks" xml:space="preserve"><value>Bookmarks</value></data>
+  <data name="BookmarksEmpty" xml:space="preserve"><value>No bookmarks yet</value></data>
+  <data name="AddBookmarkTooltip" xml:space="preserve"><value>Bookmark this page</value></data>
+  <data name="BookmarksTooltip" xml:space="preserve"><value>Bookmarks</value></data>
+  <data name="History" xml:space="preserve"><value>History</value></data>
+  <data name="AllHistory" xml:space="preserve"><value>All history</value></data>
+  <data name="ShowAllHistory" xml:space="preserve"><value>Show all history</value></data>
+  <data name="OpenTab" xml:space="preserve"><value>Open tab</value></data>
+  <data name="HistoryEmpty" xml:space="preserve"><value>No history yet</value></data>
+  <data name="HistoryTooltip" xml:space="preserve"><value>History</value></data>
+  <data name="ClearHistory" xml:space="preserve"><value>Clear</value></data>
+  <data name="Downloads" xml:space="preserve"><value>Downloads</value></data>
+  <data name="DownloadsEmpty" xml:space="preserve"><value>No downloads yet</value></data>
+  <data name="DownloadsTooltip" xml:space="preserve"><value>Downloads</value></data>
+  <data name="FindInPage" xml:space="preserve"><value>Find in page</value></data>
+  <data name="FindPrevious" xml:space="preserve"><value>Previous match</value></data>
+  <data name="FindNext" xml:space="preserve"><value>Next match</value></data>
+  <data name="FindClose" xml:space="preserve"><value>Close find</value></data>
+  <data name="ShowFindButtonInToolbar" xml:space="preserve"><value>Show Find in Page button in toolbar</value></data>
+  <data name="DownloadComplete" xml:space="preserve"><value>Complete</value></data>
+  <data name="DownloadCancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="DownloadPaused" xml:space="preserve"><value>Paused</value></data>
+  <data name="DownloadFailed" xml:space="preserve"><value>Download failed</value></data>
+  <data name="DownloadFileMissing" xml:space="preserve"><value>File is no longer at this location</value></data>
+  <data name="DownloadSizeUnknown" xml:space="preserve"><value>Unknown size</value></data>
+  <data name="DownloadSecondsRemainingFormat" xml:space="preserve"><value>{0} sec left</value></data>
+  <data name="DownloadMinutesRemainingFormat" xml:space="preserve"><value>{0} min left</value></data>
+  <data name="DownloadPause" xml:space="preserve"><value>Pause</value></data>
+  <data name="DownloadResume" xml:space="preserve"><value>Resume</value></data>
+  <data name="DownloadCancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="DownloadOpen" xml:space="preserve"><value>Open</value></data>
+  <data name="DownloadShowInFolder" xml:space="preserve"><value>Show in folder</value></data>
+  <data name="DownloadRemoveFromHistory" xml:space="preserve"><value>Remove from history</value></data>
+  <data name="DownloadRetry" xml:space="preserve"><value>Retry</value></data>
+  <data name="ShowAllDownloads" xml:space="preserve"><value>Show all downloads</value></data>
+  <data name="ClearDownloadHistory" xml:space="preserve"><value>Clear history</value></data>
+  <data name="ActiveDownloads" xml:space="preserve"><value>Active downloads</value></data>
+  <data name="RecentDownloads" xml:space="preserve"><value>Recent downloads</value></data>
+  <data name="DownloadSearchPlaceholder" xml:space="preserve"><value>Search downloads</value></data>
+  <data name="DownloadLocation" xml:space="preserve"><value>Download location</value></data>
+  <data name="ChooseDownloadLocation" xml:space="preserve"><value>Choose folder</value></data>
+  <data name="AskWhereToSaveDownloads" xml:space="preserve"><value>Ask where to save each file before downloading</value></data>
+  <data name="DownloadSaveDialogTitle" xml:space="preserve"><value>Save download</value></data>
+  <data name="DownloadExecutableWarningTitle" xml:space="preserve"><value>Open file?</value></data>
+  <data name="DownloadExecutableWarning" xml:space="preserve"><value>This file contains executable content. Fursoy cannot verify that it is safe. Open it only if you trust the source.</value></data>
+  <data name="NewTabSearchPlaceholder" xml:space="preserve"><value>Search Google or type an address</value></data>
+  <data name="NewTabSearchPlaceholderFormat" xml:space="preserve"><value>Search {0} or type an address</value></data>
+  <data name="AddressBarPlaceholderFormat" xml:space="preserve"><value>Search {0} or type a URL</value></data>
+  <data name="ReloadTooltip" xml:space="preserve"><value>Reload this page</value></data>
+  <data name="StopLoadingTooltip" xml:space="preserve"><value>Stop loading this page</value></data>
+  <data name="ContextBack" xml:space="preserve"><value>Back</value></data>
+  <data name="ContextForward" xml:space="preserve"><value>Forward</value></data>
+  <data name="ContextReload" xml:space="preserve"><value>Reload</value></data>
+  <data name="ContextReloadNoCache" xml:space="preserve"><value>Hard reload</value></data>
+  <data name="ContextStop" xml:space="preserve"><value>Stop loading</value></data>
+  <data name="ContextUndo" xml:space="preserve"><value>Undo</value></data>
+  <data name="ContextRedo" xml:space="preserve"><value>Redo</value></data>
+  <data name="ContextCut" xml:space="preserve"><value>Cut</value></data>
+  <data name="ContextCopy" xml:space="preserve"><value>Copy</value></data>
+  <data name="ContextPaste" xml:space="preserve"><value>Paste</value></data>
+  <data name="ContextDelete" xml:space="preserve"><value>Delete</value></data>
+  <data name="ContextSelectAll" xml:space="preserve"><value>Select all</value></data>
+  <data name="ContextPrint" xml:space="preserve"><value>Print</value></data>
+  <data name="ContextViewSource" xml:space="preserve"><value>View page source</value></data>
+  <data name="ContextInspect" xml:space="preserve"><value>Inspect</value></data>
+  <data name="ContextOpenLinkNewTab" xml:space="preserve"><value>Open link in new tab</value></data>
+  <data name="ContextOpenLinkNewWindow" xml:space="preserve"><value>Open link in new window</value></data>
+  <data name="ContextCopyLink" xml:space="preserve"><value>Copy link address</value></data>
+  <data name="ContextSaveLink" xml:space="preserve"><value>Save link as</value></data>
+  <data name="ContextOpenImageNewTab" xml:space="preserve"><value>Open image in new tab</value></data>
+  <data name="ContextSaveImage" xml:space="preserve"><value>Save image as</value></data>
+  <data name="ContextCopyImage" xml:space="preserve"><value>Copy image</value></data>
+  <data name="ContextCopyImageAddress" xml:space="preserve"><value>Copy image address</value></data>
+  <data name="ContextSearchSelection" xml:space="preserve"><value>Search {0} for “{1}”</value></data>
+  <data name="AddressBarPlaceholder" xml:space="preserve"><value>Search Google or type a URL</value></data>
+  <data name="TabSearchTooltip" xml:space="preserve"><value>Search tabs</value></data>
+  <data name="MenuTooltip" xml:space="preserve"><value>Customize and control</value></data>
+  <data name="MoreTools" xml:space="preserve"><value>More tools</value></data>
+  <data name="ProfileTooltip" xml:space="preserve"><value>Profile</value></data>
+  <data name="NewTabTooltip" xml:space="preserve"><value>New tab</value></data>
+  <data name="ExtensionsTooltip" xml:space="preserve"><value>Extensions</value></data>
+  <data name="TranslateTooltip" xml:space="preserve"><value>Translate</value></data>
+  <data name="PinTab" xml:space="preserve"><value>Pin tab</value></data>
+  <data name="UnpinTab" xml:space="preserve"><value>Unpin tab</value></data>
+  <data name="MuteTab" xml:space="preserve"><value>Mute site</value></data>
+  <data name="UnmuteTab" xml:space="preserve"><value>Unmute site</value></data>
+  <data name="NewTabToRight" xml:space="preserve"><value>New tab to the right</value></data>
+  <data name="ReloadTab" xml:space="preserve"><value>Reload</value></data>
+  <data name="DuplicateTab" xml:space="preserve"><value>Duplicate</value></data>
+  <data name="MoveTabToNewWindow" xml:space="preserve"><value>Move tab to new window</value></data>
+  <data name="CloseTab" xml:space="preserve"><value>Close</value></data>
+  <data name="CloseOtherTabs" xml:space="preserve"><value>Close other tabs</value></data>
+  <data name="CloseTabsToRight" xml:space="preserve"><value>Close tabs to the right</value></data>
+  <data name="ReopenClosedTab" xml:space="preserve"><value>Reopen closed tab</value></data>
+  <data name="Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="DarkTheme" xml:space="preserve"><value>Dark theme</value></data>
+  <data name="LightTheme" xml:space="preserve"><value>Light theme</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="SearchEngine" xml:space="preserve"><value>Search engine</value></data>
+  <data name="RestoreSession" xml:space="preserve"><value>Restore previous tabs on startup</value></data>
+  <data name="Turkish" xml:space="preserve"><value>Turkish</value></data>
+  <data name="English" xml:space="preserve"><value>English</value></data>
+  <data name="SecureConnection" xml:space="preserve"><value>Connection is secure</value></data>
+  <data name="NotSecure" xml:space="preserve"><value>Connection is not secure</value></data>
+  <data name="CertificateError" xml:space="preserve"><value>Certificate error</value></data>
+  <data name="SitePermissions" xml:space="preserve"><value>Site information and permissions</value></data>
+  <data name="PermissionRequest" xml:space="preserve"><value>This site is requesting permission:</value></data>
+  <data name="Allow" xml:space="preserve"><value>Allow</value></data>
+  <data name="Block" xml:space="preserve"><value>Block</value></data>
+  <data name="Camera" xml:space="preserve"><value>Camera</value></data>
+  <data name="Microphone" xml:space="preserve"><value>Microphone</value></data>
+  <data name="Location" xml:space="preserve"><value>Location</value></data>
+  <data name="Notifications" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Clipboard" xml:space="preserve"><value>Clipboard</value></data>
+  <data name="SearchWithEngine" xml:space="preserve"><value>Search with {0}</value></data>
+  <data name="GoToAddress" xml:space="preserve"><value>Go to address</value></data>
+  <data name="AppTitle" xml:space="preserve"><value>FURSOY Browser</value></data>
+</root>

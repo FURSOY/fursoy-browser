@@ -13,9 +13,9 @@ namespace Fursoy.Browser.App.Controls;
 ///     │ Content │
 ///   ┌─╯         ╰─┐
 ///
-/// Yarıçaplar Chromium'un tab_style.cc dosyasındaki gerçek değerlerdir:
-/// üst köşe 10, alt (uzantı) köşe 12 DIP. Yay yönleri de aynı: üst köşeler
-/// saat yönünde, alt köşeler saat yönünün tersine.
+/// Güncel koyu tema referansındaki yarıçaplar: üst köşe 9, alt
+/// omuz 12 DIP. Yay yönleri: üst köşeler saat yönünde, alt
+/// köşeler saat yönünün tersine.
 ///
 /// Şekil genişliğe göre yeniden hesaplandığı için sekme genişliği
 /// değişse de doğru kalır.
@@ -28,7 +28,7 @@ public class TabShape : FrameworkElement
 
     public static readonly DependencyProperty TopRadiusProperty =
         DependencyProperty.Register(nameof(TopRadius), typeof(double), typeof(TabShape),
-            new FrameworkPropertyMetadata(10.0, FrameworkPropertyMetadataOptions.AffectsRender));
+            new FrameworkPropertyMetadata(9.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
     public static readonly DependencyProperty BottomRadiusProperty =
         DependencyProperty.Register(nameof(BottomRadius), typeof(double), typeof(TabShape),

@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7C85CE1D-E01
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fursoy.Browser.App", "src\Fursoy.Browser.App\Fursoy.Browser.App.csproj", "{3D57393C-E68D-4940-B2EF-27CE0EBD952D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fursoy.Browser.SmokeTests", "tests\Fursoy.Browser.SmokeTests\Fursoy.Browser.SmokeTests.csproj", "{DFAD9D5C-315B-41D8-9F50-9D21B1B85B61}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{3D57393C-E68D-4940-B2EF-27CE0EBD952D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D57393C-E68D-4940-B2EF-27CE0EBD952D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D57393C-E68D-4940-B2EF-27CE0EBD952D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFAD9D5C-315B-41D8-9F50-9D21B1B85B61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFAD9D5C-315B-41D8-9F50-9D21B1B85B61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFAD9D5C-315B-41D8-9F50-9D21B1B85B61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFAD9D5C-315B-41D8-9F50-9D21B1B85B61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3D57393C-E68D-4940-B2EF-27CE0EBD952D} = {7C85CE1D-E010-41B5-A845-EFDE3C0A6DFF}

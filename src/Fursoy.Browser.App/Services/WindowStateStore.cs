@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Fursoy.Browser.App.Services;
 
@@ -27,6 +28,7 @@ public static class WindowStateStore
     public static void Apply(Window window)
     {
         var layout = Load();
+        var maximized = layout?.Maximized == true;
         if (layout != null && IsOnScreen(layout))
         {
             window.Left = layout.Left;
@@ -36,7 +38,35 @@ public static class WindowStateStore
             if (layout.Maximized) window.WindowState = WindowState.Maximized;
         }
 
-        window.Closing += (_, _) => Save(window);
+        // Terminalden Ctrl+C ile kapatıldığında Closing çalışmayabilir.
+        // Boyut/konum değişikliğini kısa gecikmeyle kaydetmek bunu da kapsar.
+        var saveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+        saveTimer.Tick += (_, _) =>
+        {
+            saveTimer.Stop();
+            Save(window, maximized);
+        };
+
+        void ScheduleSave()
+        {
+            if (window.WindowState == WindowState.Minimized) return;
+            saveTimer.Stop();
+            saveTimer.Start();
+        }
+
+        window.LocationChanged += (_, _) => ScheduleSave();
+        window.SizeChanged += (_, _) => ScheduleSave();
+        window.StateChanged += (_, _) =>
+        {
+            if (window.WindowState == WindowState.Maximized) maximized = true;
+            else if (window.WindowState == WindowState.Normal) maximized = false;
+            ScheduleSave();
+        };
+        window.Closing += (_, _) =>
+        {
+            saveTimer.Stop();
+            Save(window, maximized);
+        };
     }
 
     private static bool IsOnScreen(WindowLayout layout)
@@ -44,7 +74,7 @@ public static class WindowStateStore
         var virtualScreen = new Rect(
             SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop,
             SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
-        return layout.Width >= 400 && layout.Height >= 300
+        return layout.Width >= 500 && layout.Height >= 88
                && virtualScreen.IntersectsWith(new Rect(layout.Left, layout.Top, layout.Width, layout.Height));
     }
 
@@ -62,16 +92,18 @@ public static class WindowStateStore
         }
     }
 
-    private static void Save(Window window)
+    private static void Save(Window window, bool maximized)
     {
-        var bounds = window.WindowState == WindowState.Maximized ? window.RestoreBounds : new Rect(window.Left, window.Top, window.Width, window.Height);
+        var bounds = window.WindowState == WindowState.Normal
+            ? new Rect(window.Left, window.Top, window.Width, window.Height)
+            : window.RestoreBounds;
         var layout = new WindowLayout
         {
             Left = bounds.Left,
             Top = bounds.Top,
             Width = bounds.Width,
             Height = bounds.Height,
-            Maximized = window.WindowState == WindowState.Maximized,
+            Maximized = maximized,
         };
 
         Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);

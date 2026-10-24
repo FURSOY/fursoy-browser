@@ -44,10 +44,38 @@ public class HistoryStore
         Save();
     }
 
+    public int RemoveByUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return 0;
+
+        var normalizedUrl = NormalizeUrl(url);
+        var matches = Entries
+            .Where(entry => string.Equals(
+                NormalizeUrl(entry.Url),
+                normalizedUrl,
+                StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        foreach (var entry in matches) Entries.Remove(entry);
+        if (matches.Count > 0) Save();
+        return matches.Count;
+    }
+
     public void Clear()
     {
         Entries.Clear();
         Save();
+    }
+
+    public static IReadOnlyList<HistoryEntry> TakeRecent(
+        IEnumerable<HistoryEntry> entries,
+        int maximumCount) =>
+        maximumCount <= 0 ? [] : entries.Take(maximumCount).ToList();
+
+    private static string NormalizeUrl(string url)
+    {
+        url = url.Trim();
+        return url.Length > 1 ? url.TrimEnd('/') : url;
     }
 
     private void Load()

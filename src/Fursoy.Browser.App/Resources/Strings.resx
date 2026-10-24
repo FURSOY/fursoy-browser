@@ -76,6 +76,15 @@
   <data name="History" xml:space="preserve">
     <value>Geçmiş</value>
   </data>
+  <data name="AllHistory" xml:space="preserve">
+    <value>Tüm geçmiş</value>
+  </data>
+  <data name="ShowAllHistory" xml:space="preserve">
+    <value>Tüm geçmişi göster</value>
+  </data>
+  <data name="OpenTab" xml:space="preserve">
+    <value>Açık sekme</value>
+  </data>
   <data name="HistoryEmpty" xml:space="preserve">
     <value>Henüz geçmiş yok</value>
   </data>
@@ -94,15 +103,72 @@
   <data name="DownloadsTooltip" xml:space="preserve">
     <value>İndirilenler</value>
   </data>
+  <data name="FindInPage" xml:space="preserve"><value>Sayfada bul</value></data>
+  <data name="FindPrevious" xml:space="preserve"><value>Önceki eşleşme</value></data>
+  <data name="FindNext" xml:space="preserve"><value>Sonraki eşleşme</value></data>
+  <data name="FindClose" xml:space="preserve"><value>Aramayı kapat</value></data>
+  <data name="ShowFindButtonInToolbar" xml:space="preserve"><value>Sayfada Bul düğmesini araç çubuğunda göster</value></data>
   <data name="DownloadComplete" xml:space="preserve">
     <value>Tamamlandı</value>
   </data>
   <data name="DownloadCancelled" xml:space="preserve">
     <value>İptal edildi</value>
   </data>
+  <data name="DownloadPaused" xml:space="preserve"><value>Duraklatıldı</value></data>
+  <data name="DownloadFailed" xml:space="preserve"><value>İndirme başarısız oldu</value></data>
+  <data name="DownloadFileMissing" xml:space="preserve"><value>Dosya artık bu konumda değil</value></data>
+  <data name="DownloadSizeUnknown" xml:space="preserve"><value>Boyut bilinmiyor</value></data>
+  <data name="DownloadSecondsRemainingFormat" xml:space="preserve"><value>{0} sn kaldı</value></data>
+  <data name="DownloadMinutesRemainingFormat" xml:space="preserve"><value>{0} dk kaldı</value></data>
+  <data name="DownloadPause" xml:space="preserve"><value>Duraklat</value></data>
+  <data name="DownloadResume" xml:space="preserve"><value>Devam et</value></data>
+  <data name="DownloadCancel" xml:space="preserve"><value>İptal et</value></data>
+  <data name="DownloadOpen" xml:space="preserve"><value>Aç</value></data>
+  <data name="DownloadShowInFolder" xml:space="preserve"><value>Klasörde göster</value></data>
+  <data name="DownloadRemoveFromHistory" xml:space="preserve"><value>Listeden kaldır</value></data>
+  <data name="DownloadRetry" xml:space="preserve"><value>Yeniden dene</value></data>
+  <data name="ShowAllDownloads" xml:space="preserve"><value>Tüm indirilenleri göster</value></data>
+  <data name="ClearDownloadHistory" xml:space="preserve"><value>Geçmişi temizle</value></data>
+  <data name="ActiveDownloads" xml:space="preserve"><value>Etkin indirmeler</value></data>
+  <data name="RecentDownloads" xml:space="preserve"><value>Son indirilenler</value></data>
+  <data name="DownloadSearchPlaceholder" xml:space="preserve"><value>İndirilenlerde ara</value></data>
+  <data name="DownloadLocation" xml:space="preserve"><value>İndirme konumu</value></data>
+  <data name="ChooseDownloadLocation" xml:space="preserve"><value>Klasör seç</value></data>
+  <data name="AskWhereToSaveDownloads" xml:space="preserve"><value>Her indirmeden önce dosyanın nereye kaydedileceğini sor</value></data>
+  <data name="DownloadSaveDialogTitle" xml:space="preserve"><value>İndirilecek dosyayı kaydet</value></data>
+  <data name="DownloadExecutableWarningTitle" xml:space="preserve"><value>Dosyayı aç?</value></data>
+  <data name="DownloadExecutableWarning" xml:space="preserve"><value>Bu dosya çalıştırılabilir içerik taşıyor. Fursoy dosyanın güvenli olduğunu doğrulayamaz. Yalnızca kaynağa güveniyorsanız açın.</value></data>
   <data name="NewTabSearchPlaceholder" xml:space="preserve">
     <value>Google'da ara veya bir adres yaz</value>
   </data>
+  <data name="NewTabSearchPlaceholderFormat" xml:space="preserve"><value>{0} ile ara veya bir adres yaz</value></data>
+  <data name="AddressBarPlaceholderFormat" xml:space="preserve"><value>{0} ile arayın veya URL'yi yazın</value></data>
+  <data name="ReloadTooltip" xml:space="preserve"><value>Bu sayfayı yeniden yükle</value></data>
+  <data name="StopLoadingTooltip" xml:space="preserve"><value>Sayfayı yüklemeyi durdur</value></data>
+  <data name="ContextBack" xml:space="preserve"><value>Geri</value></data>
+  <data name="ContextForward" xml:space="preserve"><value>İleri</value></data>
+  <data name="ContextReload" xml:space="preserve"><value>Yeniden yükle</value></data>
+  <data name="ContextReloadNoCache" xml:space="preserve"><value>Önbelleksiz yeniden yükle</value></data>
+  <data name="ContextStop" xml:space="preserve"><value>Yüklemeyi durdur</value></data>
+  <data name="ContextUndo" xml:space="preserve"><value>Geri al</value></data>
+  <data name="ContextRedo" xml:space="preserve"><value>Yinele</value></data>
+  <data name="ContextCut" xml:space="preserve"><value>Kes</value></data>
+  <data name="ContextCopy" xml:space="preserve"><value>Kopyala</value></data>
+  <data name="ContextPaste" xml:space="preserve"><value>Yapıştır</value></data>
+  <data name="ContextDelete" xml:space="preserve"><value>Sil</value></data>
+  <data name="ContextSelectAll" xml:space="preserve"><value>Tümünü seç</value></data>
+  <data name="ContextPrint" xml:space="preserve"><value>Yazdır</value></data>
+  <data name="ContextViewSource" xml:space="preserve"><value>Sayfa kaynağını görüntüle</value></data>
+  <data name="ContextInspect" xml:space="preserve"><value>İncele</value></data>
+  <data name="ContextOpenLinkNewTab" xml:space="preserve"><value>Bağlantıyı yeni sekmede aç</value></data>
+  <data name="ContextOpenLinkNewWindow" xml:space="preserve"><value>Bağlantıyı yeni pencerede aç</value></data>
+  <data name="ContextCopyLink" xml:space="preserve"><value>Bağlantı adresini kopyala</value></data>
+  <data name="ContextSaveLink" xml:space="preserve"><value>Bağlantıyı farklı kaydet</value></data>
+  <data name="ContextOpenImageNewTab" xml:space="preserve"><value>Görseli yeni sekmede aç</value></data>
+  <data name="ContextSaveImage" xml:space="preserve"><value>Görseli farklı kaydet</value></data>
+  <data name="ContextCopyImage" xml:space="preserve"><value>Görseli kopyala</value></data>
+  <data name="ContextCopyImageAddress" xml:space="preserve"><value>Görsel adresini kopyala</value></data>
+  <data name="ContextSearchSelection" xml:space="preserve"><value>{0} ile “{1}” ara</value></data>
   <data name="AddressBarPlaceholder" xml:space="preserve">
     <value>Google'da arayın veya URL'yi yazın</value>
   </data>
@@ -112,12 +178,72 @@
   <data name="MenuTooltip" xml:space="preserve">
     <value>Ayarlar ve diğerleri</value>
   </data>
+  <data name="MoreTools" xml:space="preserve">
+    <value>Diğer araçlar</value>
+  </data>
   <data name="ProfileTooltip" xml:space="preserve">
     <value>Profil</value>
   </data>
   <data name="NewTabTooltip" xml:space="preserve">
     <value>Yeni sekme</value>
   </data>
+  <data name="ExtensionsTooltip" xml:space="preserve">
+    <value>Eklentiler</value>
+  </data>
+  <data name="TranslateTooltip" xml:space="preserve">
+    <value>Çevir</value>
+  </data>
+  <data name="PinTab" xml:space="preserve">
+    <value>Sekmeyi sabitle</value>
+  </data>
+  <data name="UnpinTab" xml:space="preserve">
+    <value>Sekme sabitlemesini kaldır</value>
+  </data>
+  <data name="MuteTab" xml:space="preserve">
+    <value>Sekmenin sesini kapat</value>
+  </data>
+  <data name="UnmuteTab" xml:space="preserve">
+    <value>Sekmenin sesini aç</value>
+  </data>
+  <data name="NewTabToRight" xml:space="preserve"><value>Sağa yeni sekme</value></data>
+  <data name="ReloadTab" xml:space="preserve"><value>Yeniden yükle</value></data>
+  <data name="DuplicateTab" xml:space="preserve"><value>Yinele</value></data>
+  <data name="MoveTabToNewWindow" xml:space="preserve"><value>Sekmeyi yeni pencereye taşı</value></data>
+  <data name="CloseTab" xml:space="preserve"><value>Kapat</value></data>
+  <data name="CloseOtherTabs" xml:space="preserve"><value>Diğer sekmeleri kapat</value></data>
+  <data name="CloseTabsToRight" xml:space="preserve"><value>Sağdaki sekmeleri kapat</value></data>
+  <data name="ReopenClosedTab" xml:space="preserve"><value>Kapatılan sekmeyi yeniden aç</value></data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ayarlar</value>
+  </data>
+  <data name="DarkTheme" xml:space="preserve">
+    <value>Koyu tema</value>
+  </data>
+  <data name="LightTheme" xml:space="preserve">
+    <value>Açık tema</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Dil</value>
+  </data>
+  <data name="Theme" xml:space="preserve"><value>Tema</value></data>
+  <data name="SearchEngine" xml:space="preserve"><value>Arama motoru</value></data>
+  <data name="RestoreSession" xml:space="preserve"><value>Açılışta önceki sekmeleri geri yükle</value></data>
+  <data name="Turkish" xml:space="preserve"><value>Türkçe</value></data>
+  <data name="English" xml:space="preserve"><value>İngilizce</value></data>
+  <data name="SecureConnection" xml:space="preserve"><value>Bağlantı güvenli</value></data>
+  <data name="NotSecure" xml:space="preserve"><value>Bağlantı güvenli değil</value></data>
+  <data name="CertificateError" xml:space="preserve"><value>Sertifika hatası</value></data>
+  <data name="SitePermissions" xml:space="preserve"><value>Site bilgileri ve izinler</value></data>
+  <data name="PermissionRequest" xml:space="preserve"><value>Bu site izin istiyor:</value></data>
+  <data name="Allow" xml:space="preserve"><value>İzin ver</value></data>
+  <data name="Block" xml:space="preserve"><value>Engelle</value></data>
+  <data name="Camera" xml:space="preserve"><value>Kamera</value></data>
+  <data name="Microphone" xml:space="preserve"><value>Mikrofon</value></data>
+  <data name="Location" xml:space="preserve"><value>Konum</value></data>
+  <data name="Notifications" xml:space="preserve"><value>Bildirimler</value></data>
+  <data name="Clipboard" xml:space="preserve"><value>Pano</value></data>
+  <data name="SearchWithEngine" xml:space="preserve"><value>{0} ile ara</value></data>
+  <data name="GoToAddress" xml:space="preserve"><value>Adrese git</value></data>
   <data name="AppTitle" xml:space="preserve">
     <value>FURSOY Browser</value>
   </data>

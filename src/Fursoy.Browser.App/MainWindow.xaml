@@ -4,43 +4,69 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:res="clr-namespace:Fursoy.Browser.App.Resources"
         xmlns:ctrl="clr-namespace:Fursoy.Browser.App.Controls"
-        Title="{x:Static res:Strings.AppTitle}" Height="800" Width="1200" MinWidth="800" MinHeight="600"
+        xmlns:services="clr-namespace:Fursoy.Browser.App.Services"
+        Title="{x:Static res:Strings.AppTitle}" Height="800" Width="1200" MinWidth="500" MinHeight="88"
+        FontFamily="{DynamicResource UiFontFamily}" UseLayoutRounding="True" SnapsToDevicePixels="True"
         Background="{StaticResource BackgroundBrush}" Foreground="{StaticResource TextPrimaryBrush}"
         WindowStyle="None" ResizeMode="CanResize">
 
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="87" GlassFrameThickness="0" CornerRadius="0"
+        <shell:WindowChrome CaptionHeight="40" GlassFrameThickness="0" CornerRadius="0"
                              ResizeBorderThickness="5" UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
-    <DockPanel x:Name="RootPanel">
-        <!-- Tab strip + window controls (Chromium kTabStripHeight=41: 35px sekme + 6px üst boşluk) -->
-        <Grid DockPanel.Dock="Top" Height="41" Background="{StaticResource BackgroundBrush}">
+    <Border x:Name="WindowFrame" BorderBrush="{DynamicResource WindowBorderBrush}">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderThickness" Value="1" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}"
+                                 Value="Maximized">
+                        <Setter Property="BorderThickness" Value="0" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+    <Grid x:Name="WindowRoot" Background="{DynamicResource BackgroundBrush}" ClipToBounds="True">
+    <DockPanel x:Name="RootPanel" Background="{DynamicResource BackgroundBrush}">
+        <!-- Chrome referansı: 40 px şerit; aktif sekme y=6..40, pasif hover y=6..34. -->
+        <Grid x:Name="TabBar" DockPanel.Dock="Top" Height="40" Background="{StaticResource BackgroundBrush}"
+              KeyboardNavigation.TabNavigation="None" KeyboardNavigation.ControlTabNavigation="None">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal">
+            <StackPanel x:Name="TabArea" Grid.Column="0" Orientation="Horizontal"
+                        Background="Transparent"
+                        shell:WindowChrome.IsHitTestVisibleInChrome="True"
+                        PreviewMouseLeftButtonDown="TabArea_PreviewMouseLeftButtonDown">
+                <StackPanel.ContextMenu>
+                    <ContextMenu Style="{StaticResource BrowserContextMenuStyle}"
+                                 Opened="TabBarContextMenu_Opened">
+                        <MenuItem Header="{x:Static res:Strings.NewTab}"
+                                  InputGestureText="Ctrl+T"
+                                  Style="{StaticResource BrowserContextMenuItemStyle}"
+                                  Click="TabBarNewTabMenuItem_Click" />
+                        <MenuItem Header="{x:Static res:Strings.ReopenClosedTab}"
+                                  InputGestureText="Ctrl+Shift+T"
+                                  Style="{StaticResource BrowserContextMenuItemStyle}"
+                                  Click="ReopenClosedTabMenuItem_Click" />
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
                 <!-- Sekme arama oku: Chrome'da şeridin en solunda durur -->
-                <Button x:Name="TabSearchButton" Style="{StaticResource ToolbarButtonStyle}"
-                        Width="28" Height="28" Margin="4,7,2,0" VerticalAlignment="Top"
+                <Button x:Name="TabSearchButton" Style="{StaticResource TabSearchButtonStyle}"
+                        Margin="6,6,2,0" VerticalAlignment="Top"
                         ToolTip="{x:Static res:Strings.TabSearchTooltip}" Click="TabSearchButton_Click">
-                    <Viewbox Width="16" Height="16">
+                    <Viewbox Width="10" Height="10">
                         <Path Data="{StaticResource IconExpandMore}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
 
-                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                    <StackPanel Orientation="Horizontal">
-                        <!--
-                            Sekmeler Chromium'daki gibi 18px üst üste biner
-                            (kTabOverlap), böylece dışa açılan alt köşeler
-                            birbirine geçer. Negatif sol kenar boşluğu bunu
-                            sağlar; ilk sekmenin kaymaması için ItemsControl'e
-                            eşit miktarda pozitif boşluk verilir.
-                        -->
-                        <ItemsControl x:Name="TabStrip" Margin="18,0,0,0"
+                <!-- Sol aktif-sekme omzunun 3 px'i Chrome'da arama düğmesi alanına taşar. -->
+                <ScrollViewer Margin="-8,0,0,0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Horizontal" Margin="8,0,0,0">
+                        <ItemsControl x:Name="TabStrip"
                                       shell:WindowChrome.IsHitTestVisibleInChrome="True">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -49,33 +75,164 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid x:Name="TabRoot" Width="256" Height="35" Margin="-18,6,0,0"
-                                          Background="Transparent"
-                                          MouseLeftButtonUp="TabBorder_MouseLeftButtonUp" Tag="{Binding}">
-                                        <ctrl:TabShape x:Name="TabBg" Fill="Transparent" TopRadius="10" BottomRadius="12" />
+                                    <Grid x:Name="TabRoot" Width="{Binding DisplayWidth}" Height="34" Margin="-8,6,-10,0"
+                                          Background="Transparent" ToolTip="{Binding Title}"
+                                           PreviewMouseLeftButtonDown="TabRoot_PreviewMouseLeftButtonDown"
+                                           MouseMove="TabRoot_MouseMove"
+                                           MouseLeftButtonUp="TabBorder_MouseLeftButtonUp"
+                                           LostMouseCapture="TabRoot_LostMouseCapture"
+                                           MouseDown="TabRoot_MouseDown" Tag="{Binding}">
+                                        <Grid.RenderTransform>
+                                            <TranslateTransform X="{Binding VisualOffsetX}" />
+                                        </Grid.RenderTransform>
+                                        <Grid.ContextMenu>
+                                            <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                                         Style="{StaticResource BrowserContextMenuStyle}"
+                                                         Opened="TabContextMenu_Opened">
+                                                <MenuItem Header="{x:Static res:Strings.NewTabToRight}"
+                                                          Style="{StaticResource BrowserContextMenuItemStyle}"
+                                                          Click="NewTabToRightMenuItem_Click" />
+                                                <MenuItem Header="{x:Static res:Strings.MoveTabToNewWindow}"
+                                                          Tag="MoveToWindow"
+                                                          Style="{StaticResource BrowserContextMenuItemStyle}"
+                                                          Click="MoveTabToNewWindowMenuItem_Click" />
+                                                <Separator Style="{StaticResource BrowserContextMenuSeparatorStyle}" />
+                                                <MenuItem Header="{x:Static res:Strings.ReloadTab}"
+                                                          InputGestureText="Ctrl+R"
+                                                          Style="{StaticResource BrowserContextMenuItemStyle}"
+                                                          Click="ReloadTabMenuItem_Click" />
+                                                <MenuItem Header="{x:Static res:Strings.DuplicateTab}"
+                                                          Style="{StaticResource BrowserContextMenuItemStyle}"
+                                                          Click="DuplicateTabMenuItem_Click" />
+                                                <MenuItem Header="{x:Static res:Strings.PinTab}" Click="PinTabMenuItem_Click">
+                                                    <MenuItem.Style>
+                                                        <Style TargetType="MenuItem" BasedOn="{StaticResource BrowserContextMenuItemStyle}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsPinned}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </MenuItem.Style>
+                                                </MenuItem>
+                                                <MenuItem Header="{x:Static res:Strings.UnpinTab}" Click="UnpinTabMenuItem_Click">
+                                                    <MenuItem.Style>
+                                                        <Style TargetType="MenuItem" BasedOn="{StaticResource BrowserContextMenuItemStyle}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsPinned}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </MenuItem.Style>
+                                                </MenuItem>
+                                                <MenuItem Header="{x:Static res:Strings.MuteTab}" Click="MuteTabMenuItem_Click">
+                                                    <MenuItem.Style>
+                                                        <Style TargetType="MenuItem" BasedOn="{StaticResource BrowserContextMenuItemStyle}">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsMuted}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </MenuItem.Style>
+                                                </MenuItem>
+                                                <MenuItem Header="{x:Static res:Strings.UnmuteTab}" Click="MuteTabMenuItem_Click">
+                                                    <MenuItem.Style>
+                                                        <Style TargetType="MenuItem" BasedOn="{StaticResource BrowserContextMenuItemStyle}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsMuted}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </MenuItem.Style>
+                                                </MenuItem>
+                                                <Separator Style="{StaticResource BrowserContextMenuSeparatorStyle}" />
+                                                <MenuItem Header="{x:Static res:Strings.CloseTab}"
+                                                          InputGestureText="Ctrl+W"
+                                                          Style="{StaticResource BrowserContextMenuItemStyle}"
+                                                          Click="CloseTabMenuItem_Click" />
+                                                <MenuItem Header="{x:Static res:Strings.CloseOtherTabs}"
+                                                          Tag="CloseOthers"
+                                                          Style="{StaticResource BrowserContextMenuItemStyle}"
+                                                          Click="CloseOtherTabsMenuItem_Click" />
+                                                <MenuItem Header="{x:Static res:Strings.CloseTabsToRight}"
+                                                          Tag="CloseRight"
+                                                          Style="{StaticResource BrowserContextMenuItemStyle}"
+                                                          Click="CloseTabsToRightMenuItem_Click" />
+                                            </ContextMenu>
+                                        </Grid.ContextMenu>
+                                        <!-- Aktif sekme alt omuzlarıyla araç çubuğuna akar. -->
+                                        <ctrl:TabShape x:Name="ActiveTabBg" Fill="Transparent"
+                                                       TopRadius="9" BottomRadius="12" />
+
+                                        <!-- Pasif hover, Chrome'da 28 px'lik ayrı bir yuvarlak dikdörtgendir. -->
+                                        <Border x:Name="HoverTabBg" Margin="12,0,12,6" CornerRadius="8"
+                                                Background="Transparent" />
 
                                         <!-- Bitişik iki pasif sekmeyi ayıran ince çizgi -->
                                         <Border x:Name="Separator" Width="2" Height="16" CornerRadius="1"
-                                                HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,0,0,0"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,0,0,6"
+                                                Background="{StaticResource TabSeparatorBrush}"
+                                                Visibility="Collapsed" />
+                                        <Border x:Name="RightSeparator" Width="2" Height="16" CornerRadius="1"
+                                                HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,6"
                                                 Background="{StaticResource TabSeparatorBrush}"
                                                 Visibility="Collapsed" />
 
-                                        <Grid Margin="12,0,12,0">
+                                        <Grid x:Name="TabContent" Margin="20,0,20,6">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <Viewbox Grid.Column="0" Width="16" Height="16" Margin="8,0,0,0">
-                                                <Path Data="{StaticResource IconGlobe}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
-                                            </Viewbox>
-                                            <TextBlock Text="{Binding Title}" Grid.Column="1" Margin="8,0,4,0"
+                                            <Grid Grid.Column="0" Width="16" Height="16">
+                                                <Grid x:Name="NormalFavicon" RenderTransformOrigin="0.5,0.5">
+                                                    <Grid.RenderTransform>
+                                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                                    </Grid.RenderTransform>
+                                                    <Viewbox Width="16" Height="16">
+                                                        <Viewbox.Style>
+                                                            <Style TargetType="Viewbox">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding FaviconUrl}" Value="{x:Null}">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Viewbox.Style>
+                                                        <Path Data="{StaticResource IconGlobe}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
+                                                    </Viewbox>
+                                                    <Image Source="{Binding FaviconUrl}" Width="16" Height="16"
+                                                           Stretch="Uniform" SnapsToDevicePixels="True" />
+                                                </Grid>
+                                                <Grid x:Name="LoadingIndicator" Width="16" Height="16" Opacity="0">
+                                                    <Ellipse x:Name="LoadingSpinner" Width="14" Height="14" Stroke="{StaticResource TextSecondaryBrush}"
+                                                             StrokeThickness="2" StrokeDashArray="1.5,2.4"
+                                                             StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                             RenderTransformOrigin="0.5,0.5">
+                                                        <Ellipse.RenderTransform>
+                                                            <RotateTransform Angle="0" />
+                                                        </Ellipse.RenderTransform>
+                                                    </Ellipse>
+                                                </Grid>
+                                            </Grid>
+                                            <TextBlock x:Name="TabTitle" Text="{Binding Title}" Grid.Column="1" Margin="8,0,4,0"
                                                        VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                                                        Foreground="{StaticResource TextPrimaryBrush}" FontSize="12" />
-                                            <Button x:Name="CloseBtn" Grid.Column="2" Width="16" Height="16"
+                                            <Button x:Name="AudioBtn" Grid.Column="0" Width="18" Height="18"
                                                     Style="{StaticResource TabCloseButtonStyle}" Visibility="Collapsed"
+                                                    ToolTip="{x:Static res:Strings.MuteTab}" Click="AudioTabButton_Click" Tag="{Binding}">
+                                                <TextBlock Text="&#xE995;" FontFamily="Segoe MDL2 Assets" FontSize="11" />
+                                            </Button>
+                                            <Button x:Name="CloseBtn" Grid.Column="2" Width="14" Height="14"
+                                                    Style="{StaticResource TabCloseButtonStyle}" Visibility="Visible"
                                                     Click="CloseTabButton_Click" Tag="{Binding}">
-                                                <Viewbox Width="10" Height="10">
+                                                <Viewbox Width="8" Height="8">
                                                     <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
                                                 </Viewbox>
                                             </Button>
@@ -85,25 +242,92 @@
                                         <DataTrigger Binding="{Binding ShowLeftSeparator}" Value="True">
                                             <Setter TargetName="Separator" Property="Visibility" Value="Visible" />
                                         </DataTrigger>
+                                        <DataTrigger Binding="{Binding ShowRightSeparator}" Value="True">
+                                            <Setter TargetName="RightSeparator" Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
                                         <Trigger SourceName="TabRoot" Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="TabBg" Property="Fill" Value="{StaticResource SurfaceHoverBrush}" />
-                                            <Setter TargetName="CloseBtn" Property="Visibility" Value="Visible" />
+                                            <Setter TargetName="HoverTabBg" Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
+                                            <Setter TargetName="Separator" Property="Visibility" Value="Collapsed" />
+                                            <Setter TargetName="RightSeparator" Property="Visibility" Value="Collapsed" />
                                         </Trigger>
                                         <!-- Aktif sekme en son gelir ki hover'ı ezsin -->
                                         <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                            <Setter TargetName="TabBg" Property="Fill" Value="{StaticResource SurfaceBrush}" />
-                                            <Setter TargetName="CloseBtn" Property="Visibility" Value="Visible" />
+                                            <Setter TargetName="ActiveTabBg" Property="Fill" Value="{StaticResource SurfaceBrush}" />
+                                            <Setter TargetName="HoverTabBg" Property="Background" Value="Transparent" />
                                             <Setter TargetName="Separator" Property="Visibility" Value="Collapsed" />
+                                            <Setter TargetName="RightSeparator" Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsAudible}" Value="True">
+                                            <Setter TargetName="AudioBtn" Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsAudible}" Value="True" />
+                                                <Condition Binding="{Binding IsMuted}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter TargetName="AudioBtn" Property="Opacity" Value="0.5" />
+                                        </MultiDataTrigger>
+                                        <DataTrigger Binding="{Binding IsPinned}" Value="True">
+                                            <Setter TargetName="TabContent" Property="Margin" Value="20,0,20,6" />
+                                            <Setter TargetName="TabTitle" Property="Visibility" Value="Collapsed" />
+                                            <Setter TargetName="CloseBtn" Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsBeingDragged}" Value="True">
+                                            <Setter TargetName="TabRoot" Property="Panel.ZIndex" Value="100" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard x:Name="LoadingTransitionStoryboard">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="NormalFavicon"
+                                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                                         To="0.52" Duration="0:0:0.10" />
+                                                        <DoubleAnimation Storyboard.TargetName="NormalFavicon"
+                                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                         To="0.52" Duration="0:0:0.10" />
+                                                        <DoubleAnimation Storyboard.TargetName="LoadingIndicator"
+                                                                         Storyboard.TargetProperty="Opacity"
+                                                                         BeginTime="0:0:0.06" To="1" Duration="0:0:0.10" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                                <BeginStoryboard x:Name="LoadingSpinStoryboard">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="LoadingSpinner"
+                                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                                         From="0" To="360" Duration="0:0:0.75"
+                                                                         RepeatBehavior="Forever" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <RemoveStoryboard BeginStoryboardName="LoadingSpinStoryboard" />
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="LoadingIndicator"
+                                                                         Storyboard.TargetProperty="Opacity"
+                                                                         To="0" Duration="0:0:0.08" />
+                                                        <DoubleAnimation Storyboard.TargetName="NormalFavicon"
+                                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                                         To="1" Duration="0:0:0.12" />
+                                                        <DoubleAnimation Storyboard.TargetName="NormalFavicon"
+                                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                                         To="1" Duration="0:0:0.12" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.ExitActions>
                                         </DataTrigger>
                                     </DataTemplate.Triggers>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <Button Style="{StaticResource NewTabButtonStyle}" Width="28" Height="28" Margin="4,7,0,0"
+                        <Button x:Name="NewTabButton" Style="{StaticResource NewTabButtonStyle}" Width="28" Height="28" Margin="4,6,0,0"
                                 VerticalAlignment="Top" ToolTip="{x:Static res:Strings.NewTabTooltip}"
                                 Click="NewTabButton_Click">
-                            <Viewbox Width="16" Height="16">
+                            <Button.RenderTransform>
+                                <TranslateTransform x:Name="NewTabButtonOffsetTransform" />
+                            </Button.RenderTransform>
+                            <Viewbox Width="10" Height="10">
                                 <Path Data="{StaticResource IconAdd}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                             </Viewbox>
                         </Button>
@@ -119,116 +343,309 @@
         </Grid>
 
         <!-- Navigation toolbar (Chromium: 34px yükseklik + 6px dikey/6px yatay iç boşluk = 46px) -->
-        <Grid DockPanel.Dock="Top" Height="46" Background="{StaticResource SurfaceBrush}">
+        <Grid x:Name="NavigationBar" DockPanel.Dock="Top" Height="46" Background="{StaticResource SurfaceBrush}"
+              SizeChanged="NavigationBar_SizeChanged">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="6,0" VerticalAlignment="Center">
-                <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,4,0" Click="BackButton_Click">
-                    <Viewbox Width="16" Height="16">
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="4,0" VerticalAlignment="Center">
+                <Button x:Name="BackButton" Style="{StaticResource ToolbarButtonStyle}"
+                        IsEnabled="False" Click="BackButton_Click">
+                    <Viewbox Width="12" Height="12">
                         <Path Data="{StaticResource IconBack}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
-                <Button Style="{StaticResource ToolbarButtonStyle}" Margin="0,0,4,0" Click="ForwardButton_Click">
-                    <Viewbox Width="16" Height="16">
+                <Button x:Name="ForwardButton" Style="{StaticResource ToolbarButtonStyle}"
+                        IsEnabled="False" Click="ForwardButton_Click">
+                    <Viewbox Width="12" Height="12">
                         <Path Data="{StaticResource IconForward}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
                 </Button>
-                <Button Style="{StaticResource ToolbarButtonStyle}" Click="ReloadButton_Click">
-                    <Viewbox Width="16" Height="16">
+                <Button x:Name="ReloadButton" Style="{StaticResource ToolbarButtonStyle}"
+                        ToolTip="{x:Static res:Strings.ReloadTooltip}" Click="ReloadButton_Click">
+                    <Grid>
+                    <Viewbox x:Name="ReloadIcon" Width="12" Height="12">
                         <Path Data="{StaticResource IconRefresh}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
                     </Viewbox>
+                    <Viewbox x:Name="StopLoadingIcon" Width="11" Height="11" Visibility="Collapsed">
+                        <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
+                    </Viewbox>
+                    </Grid>
                 </Button>
             </StackPanel>
 
-            <Border Grid.Column="1" Margin="9,6" Padding="12,0" Style="{StaticResource AddressBarContainerStyle}"
+            <Border x:Name="AddressBarContainer" Grid.Column="1" Margin="5,5,4,7" Padding="0"
+                    PreviewMouseLeftButtonDown="AddressBarContainer_PreviewMouseLeftButtonDown"
                     shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource AddressBarContainerStyle}">
+                        <Style.Triggers>
+                            <!-- Öneriler açıkken adres satırı, aşağıdaki yüzeyin üst parçasıdır. -->
+                            <DataTrigger Binding="{Binding IsOpen, ElementName=AddressSuggestionsPopup}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+                                <Setter Property="BorderBrush" Value="{StaticResource HighlightRimBrush}" />
+                                <Setter Property="BorderThickness" Value="1,1,1,0" />
+                                <Setter Property="CornerRadius" Value="12,12,0,0" />
+                                <Setter Property="Effect" Value="{x:Null}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="36" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Viewbox Grid.Column="0" Width="16" Height="16" Margin="0,0,8,0">
-                        <Path Data="{StaticResource IconSearch}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
-                    </Viewbox>
+                    <Grid x:Name="SiteControls" Grid.Column="0" Cursor="Hand"
+                          MouseLeftButtonUp="SiteControls_MouseLeftButtonUp">
+                        <!-- Yeni sekmede arama; gerçek sayfada Chrome'un site denetimleri ikonu. -->
+                        <Viewbox Width="14" Height="14">
+                            <Viewbox.Style>
+                                <Style TargetType="Viewbox">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Tag, ElementName=AddressBar}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Viewbox.Style>
+                            <Path Data="{StaticResource IconSearch}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
+                        </Viewbox>
+                        <Viewbox Width="12" Height="12" Stretch="Fill">
+                            <Viewbox.Style>
+                                <Style TargetType="Viewbox">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Tag, ElementName=AddressBar}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Viewbox.Style>
+                            <Path Data="{StaticResource IconTune}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Fill" />
+                        </Viewbox>
+                    </Grid>
                     <Grid Grid.Column="1">
                         <TextBox x:Name="AddressBar" Style="{StaticResource AddressBarStyle}"
-                                 KeyDown="AddressBar_KeyDown" />
+                                 TextChanged="AddressBar_TextChanged"
+                                 GotKeyboardFocus="AddressBar_GotKeyboardFocus"
+                                 LostKeyboardFocus="AddressBar_LostKeyboardFocus"
+                                 PreviewMouseLeftButtonUp="AddressBar_PreviewMouseLeftButtonUp"
+                                 PreviewMouseMove="AddressBar_PreviewMouseMove"
+                                 PreviewKeyDown="AddressBar_PreviewKeyDown" />
                         <!-- Adres çubuğu boşken görünen ipucu metni -->
-                        <TextBlock Text="{x:Static res:Strings.AddressBarPlaceholder}" IsHitTestVisible="False"
-                                   VerticalAlignment="Center" FontSize="12"
+                        <TextBlock x:Name="AddressBarPlaceholderText" IsHitTestVisible="False"
+                                   VerticalAlignment="Center" FontFamily="{DynamicResource UiFontFamily}"
+                                   FontSize="{DynamicResource AddressBarFontSize}" LineHeight="18"
+                                   TextOptions.TextFormattingMode="Display"
+                                   TextOptions.TextRenderingMode="ClearType"
                                    Foreground="{StaticResource TextSecondaryBrush}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Text, ElementName=AddressBar}" Value="">
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Text, ElementName=AddressBar}" Value="" />
+                                                <Condition Binding="{Binding IsKeyboardFocused, ElementName=AddressBar}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
                                             <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
                     </Grid>
+
+                    <!-- Sağ aksiyonlar yalnızca görünür düğmeler kadar yer kaplar; yıldız en sağda kalır. -->
+                    <StackPanel x:Name="AddressActionsPanel" Grid.Column="2" Orientation="Horizontal" Margin="0,0,4,0"
+                                VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <Button x:Name="FindPageButton" Width="28" Height="28" Margin="2,0,2,0"
+                            VerticalAlignment="Center"
+                            ToolTip="{x:Static res:Strings.FindInPage}" Click="FindPageButton_Click">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource BaseIconButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsOpen, ElementName=FindPanelPopup}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource SurfacePressedBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Viewbox Width="16" Height="16">
+                            <Path Data="{StaticResource IconFindPage}"
+                                  StrokeThickness="1.8"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Stroke" Value="{DynamicResource TextSecondaryBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOpen, ElementName=FindPanelPopup}" Value="True">
+                                                <Setter Property="Stroke" Value="{DynamicResource AccentBrush}" />
+                                            </DataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True" />
+                                                    <Condition Binding="{Binding IsOpen, ElementName=FindPanelPopup}" Value="False" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Stroke" Value="{DynamicResource TextPrimaryBrush}" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </Viewbox>
+                    </Button>
+
+                    <ToggleButton x:Name="StarButton" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
+                                  Click="StarButton_Click">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton" BasedOn="{StaticResource StarToggleButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Tag, ElementName=AddressBar}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                        <Viewbox Width="14" Height="14" Stretch="Fill">
+                            <Path Data="{StaticResource IconStar}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsChecked, ElementName=StarButton}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource AccentBrush}" />
+                                            </DataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ToggleButton}}" Value="True" />
+                                                    <Condition Binding="{Binding IsChecked, ElementName=StarButton}" Value="False" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </Viewbox>
+                    </ToggleButton>
+                    </StackPanel>
                 </Grid>
             </Border>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,6,0" VerticalAlignment="Center">
-                <ToggleButton x:Name="StarButton" Style="{StaticResource StarToggleButtonStyle}"
-                              Margin="0,0,4,0" ToolTip="{x:Static res:Strings.AddBookmarkTooltip}"
-                              Click="StarButton_Click">
-                    <Viewbox Width="16" Height="16">
-                        <Path Data="{StaticResource IconStar}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform">
-                            <Path.Style>
-                                <Style TargetType="Path">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsChecked, ElementName=StarButton}" Value="True">
-                                            <Setter Property="Fill" Value="{StaticResource AccentBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Path.Style>
-                        </Path>
-                    </Viewbox>
-                </ToggleButton>
-                <Button x:Name="BookmarksButton" Style="{StaticResource ToolbarButtonStyle}"
-                        Margin="0,0,4,0" ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click">
-                    <Viewbox Width="16" Height="16">
-                        <Path Data="{StaticResource IconBookmarks}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
+            <!-- Geniş durumda Chrome ölçüleri; dar durumda uzantıdan sonraki
+                 araçlar » menüsüne taşınarak adres çubuğuna yer açar. -->
+            <StackPanel x:Name="ToolbarRightGroup" Orientation="Horizontal" Grid.Column="2"
+                        Width="251" Margin="5,0,4,0" VerticalAlignment="Center">
+                <Button Style="{StaticResource ToolbarButtonStyle}" ToolTip="{x:Static res:Strings.ExtensionsTooltip}">
+                    <Viewbox Width="16" Height="16" Stretch="Fill">
+                        <Path Data="{StaticResource IconExtensions}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Fill" />
                     </Viewbox>
                 </Button>
-                <Button x:Name="HistoryButton" Style="{StaticResource ToolbarButtonStyle}"
-                        Margin="0,0,4,0" ToolTip="{x:Static res:Strings.HistoryTooltip}" Click="HistoryButton_Click">
-                    <Viewbox Width="16" Height="16">
-                        <Path Data="{StaticResource IconHistory}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
-                    </Viewbox>
-                </Button>
+
+                <Grid x:Name="ExtensionDivider" Width="16">
+                    <Border Width="1" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="{StaticResource BorderBrush}" />
+                </Grid>
+
                 <Button x:Name="DownloadsButton" Style="{StaticResource ToolbarButtonStyle}"
                         ToolTip="{x:Static res:Strings.DownloadsTooltip}" Click="DownloadsButton_Click">
-                    <Viewbox Width="16" Height="16">
-                        <Path Data="{StaticResource IconDownload}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
+                    <Grid Width="22" Height="22">
+                        <Viewbox Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Path x:Name="DownloadToolbarIcon" Data="{StaticResource IconDownload}"
+                                  Fill="{DynamicResource TextSecondaryBrush}" Stretch="Uniform"
+                                  RenderTransformOrigin="0.5,0.5">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform x:Name="DownloadToolbarIconScale" ScaleX="1" ScaleY="1" />
+                                        <TranslateTransform x:Name="DownloadToolbarIconTranslate" />
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                            </Path>
+                        </Viewbox>
+                        <Ellipse x:Name="DownloadStartPulse" Width="18" Height="18" Opacity="0"
+                                 IsHitTestVisible="False" Stroke="{DynamicResource AccentBrush}"
+                                 StrokeThickness="1.5" RenderTransformOrigin="0.5,0.5">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform x:Name="DownloadStartPulseScale" ScaleX="0.55" ScaleY="0.55" />
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <ProgressBar x:Name="DownloadProgressIndicator" Minimum="0" Maximum="100"
+                                     Height="2" Width="20" VerticalAlignment="Bottom"
+                                     Foreground="{DynamicResource AccentBrush}"
+                                     Background="{DynamicResource SurfaceAltBrush}"
+                                     BorderThickness="0" Visibility="Collapsed" />
+                        <Border x:Name="DownloadActiveCountTextContainer" Width="13" Height="13" CornerRadius="7"
+                                Background="{DynamicResource AccentBrush}" HorizontalAlignment="Right"
+                                VerticalAlignment="Top" Margin="0,-4,-4,0" Visibility="Collapsed">
+                            <TextBlock x:Name="DownloadActiveCountText" FontSize="8" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextOnAccentBrush}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" />
+                        </Border>
+                    </Grid>
+                </Button>
+
+                <Button x:Name="TranslateButton" Style="{StaticResource ToolbarButtonStyle}"
+                        ToolTip="{x:Static res:Strings.TranslateTooltip}">
+                    <Viewbox Width="18" Height="18" Stretch="Fill">
+                        <Path Data="{StaticResource IconTranslate}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Fill" />
                     </Viewbox>
                 </Button>
 
-                <!-- Chrome'daki gibi ikon gruplarını ayıran dikey çizgi -->
-                <Border Width="1" Height="16" Margin="8,0" VerticalAlignment="Center"
-                        Background="{StaticResource BorderBrush}" />
+                <Grid x:Name="FeatureDivider" Width="18">
+                    <Border Width="1" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="{StaticResource BorderBrush}" />
+                </Grid>
 
-                <Border x:Name="ProfileAvatar" Width="26" Height="26" CornerRadius="13" Margin="0,0,4,0"
-                        Background="{StaticResource SurfaceAltBrush}" ToolTip="{x:Static res:Strings.ProfileTooltip}"
-                        shell:WindowChrome.IsHitTestVisibleInChrome="True">
-                    <Viewbox Width="18" Height="18">
-                        <Path Data="{StaticResource IconAccountCircle}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
+                <Button x:Name="BookmarksButton" Style="{StaticResource ToolbarButtonStyle}"
+                        ToolTip="{x:Static res:Strings.BookmarksTooltip}" Click="BookmarksButton_Click">
+                    <Viewbox Width="15" Height="11" Stretch="Fill">
+                        <Path Data="{StaticResource IconSidePanel}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Fill" />
                     </Viewbox>
-                </Border>
+                </Button>
+
+                <Grid x:Name="ProfileContainer" Width="37">
+                    <Border x:Name="ProfileAvatar" Width="24" Height="24" CornerRadius="12"
+                            Background="{StaticResource AccentBrush}" ToolTip="{x:Static res:Strings.ProfileTooltip}"
+                            shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                        <Viewbox Width="16" Height="16">
+                            <Path Data="{StaticResource IconAccountCircle}" Fill="{StaticResource BackgroundBrush}" Stretch="Uniform" />
+                        </Viewbox>
+                    </Border>
+                </Grid>
+
+                <Button x:Name="ToolbarOverflowButton" Style="{StaticResource ToolbarButtonStyle}"
+                        Visibility="Collapsed" ToolTip="{x:Static res:Strings.MoreTools}"
+                        Click="ToolbarOverflowButton_Click">
+                    <TextBlock Text="»" FontFamily="Segoe UI" FontSize="18"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                    <Button.ContextMenu>
+                        <ContextMenu Style="{StaticResource BrowserContextMenuStyle}">
+                            <MenuItem Header="{x:Static res:Strings.DownloadsTooltip}"
+                                      Style="{StaticResource BrowserContextMenuItemStyle}"
+                                      Click="OverflowDownloadsMenuItem_Click" />
+                            <MenuItem Header="{x:Static res:Strings.TranslateTooltip}"
+                                      Style="{StaticResource BrowserContextMenuItemStyle}"
+                                      IsEnabled="False" />
+                            <MenuItem Header="{x:Static res:Strings.BookmarksTooltip}"
+                                      Style="{StaticResource BrowserContextMenuItemStyle}"
+                                      Click="OverflowBookmarksMenuItem_Click" />
+                            <MenuItem Header="{x:Static res:Strings.ProfileTooltip}"
+                                      Style="{StaticResource BrowserContextMenuItemStyle}"
+                                      IsEnabled="False" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
 
                 <Button x:Name="MenuButton" Style="{StaticResource ToolbarButtonStyle}"
                         ToolTip="{x:Static res:Strings.MenuTooltip}" Click="MenuButton_Click">
-                    <Viewbox Width="16" Height="16">
-                        <Path Data="{StaticResource IconMoreVert}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" />
+                    <Viewbox Width="4" Height="12" Stretch="Fill">
+                        <Path Data="{StaticResource IconMoreVert}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Fill" />
                     </Viewbox>
                 </Button>
             </StackPanel>
@@ -251,6 +668,242 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </StackPanel>
+
+        <!-- Chromium'un native sayfa yüzeyinin üzerinde kalan yerel omnibox önerileri. -->
+        <Popup x:Name="AddressSuggestionsPopup"
+               PlacementTarget="{Binding ElementName=AddressBarContainer}"
+               Placement="Bottom" HorizontalOffset="-16" VerticalOffset="-1"
+               Closed="AddressSuggestionsPopup_Closed"
+               StaysOpen="False" AllowsTransparency="True">
+            <Grid>
+            <Border Style="{StaticResource PopupSurfaceStyle}"
+                    Width="{Binding ActualWidth, ElementName=AddressBarContainer}"
+                    Margin="16,0,16,22"
+                    BorderThickness="1,0,1,1" CornerRadius="0,0,12,12" Padding="5,3,5,6">
+                <ListBox x:Name="AddressSuggestionsList"
+                         BorderThickness="0" Background="Transparent"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         PreviewMouseLeftButtonDown="AddressSuggestion_PreviewMouseLeftButtonDown"
+                         PreviewMouseLeftButtonUp="AddressSuggestion_PreviewMouseLeftButtonUp">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,1" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="SuggestionBackground"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="7">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="SuggestionBackground" Property="Background"
+                                                        Value="{StaticResource SurfaceHoverBrush}" />
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="SuggestionBackground" Property="Background"
+                                                        Value="{StaticResource SurfacePressedBrush}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="38" Margin="10,0,4,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <!-- Tüm türler aynı 16 px ikon alanını paylaşır; metin konumu değişmez. -->
+                                <Grid Width="16" Height="16" HorizontalAlignment="Left"
+                                      VerticalAlignment="Center">
+                                    <Image Width="16" Height="16" Source="{Binding CachedFaviconUrl}"
+                                           Stretch="Uniform">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CachedFaviconUrl}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                    <Viewbox Width="15" Height="15">
+                                        <Viewbox.Style>
+                                            <Style TargetType="Viewbox">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CachedFaviconUrl}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Viewbox.Style>
+                                        <Path Stretch="Uniform">
+                                            <Path.Style>
+                                                <Style TargetType="Path">
+                                                    <Setter Property="Data" Value="{StaticResource IconHistory}" />
+                                                    <Setter Property="Fill" Value="{StaticResource TextSecondaryBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsSearchResult}" Value="True">
+                                                            <Setter Property="Data" Value="{StaticResource IconSearch}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Source}"
+                                                                     Value="{x:Static services:OmniboxSuggestionSource.VerbatimUrl}">
+                                                            <Setter Property="Data" Value="{StaticResource IconGlobe}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Source}"
+                                                                     Value="{x:Static services:OmniboxSuggestionSource.Bookmark}">
+                                                            <Setter Property="Data" Value="{StaticResource IconStar}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Source}"
+                                                                     Value="{x:Static services:OmniboxSuggestionSource.OpenTab}">
+                                                            <Setter Property="Data" Value="{StaticResource IconOpenTab}" />
+                                                            <Setter Property="Fill" Value="{StaticResource AccentBrush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Path.Style>
+                                        </Path>
+                                    </Viewbox>
+                                </Grid>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0"
+                                           FontSize="12" Foreground="{StaticResource TextPrimaryBrush}"
+                                           TextTrimming="CharacterEllipsis" TextWrapping="NoWrap">
+                                    <Run Text="{Binding Title}" FontWeight="SemiBold" />
+                                    <Run Text="  –  " Foreground="{StaticResource TextSecondaryBrush}" />
+                                    <Run Text="{Binding SecondaryText, Mode=OneWay}"
+                                         Foreground="{DynamicResource OmniboxUrlBrush}" />
+                                </TextBlock>
+                                <Button Grid.Column="2" Tag="{Binding}"
+                                        ToolTip="{x:Static res:Strings.ContextDelete}"
+                                        Click="RemoveAddressSuggestionButton_Click">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource TabCloseButtonStyle}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Setter Property="Width" Value="26" />
+                                            <Setter Property="Height" Value="26" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Source}"
+                                                             Value="{x:Static services:OmniboxSuggestionSource.History}">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <Viewbox Width="9" Height="9">
+                                        <Path Data="{StaticResource IconClose}"
+                                              Fill="{StaticResource TextSecondaryBrush}"
+                                              Stretch="Uniform" />
+                                    </Viewbox>
+                                </Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+            </Grid>
+        </Popup>
+
+        <!-- Chromium Find: dış tıklama veya sayfa odağı paneli kapatmaz. -->
+        <Popup x:Name="FindPanelPopup"
+               PlacementTarget="{Binding ElementName=BrowserHost}"
+               ctrl:ToolbarPopupAnchor.AlignTopRightInsideTarget="True"
+               StaysOpen="True" AllowsTransparency="True"
+               Opened="FindPanelPopup_Opened">
+            <Grid>
+                <Border Style="{StaticResource PopupSurfaceStyle}" Width="350" Height="50"
+                        Margin="{StaticResource PopupShadowHostMargin}" Padding="8,7">
+                    <Grid Height="34">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="30" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="FindInput" Grid.Column="0"
+                                 Background="Transparent" BorderThickness="0" Padding="4,0"
+                                 Foreground="{DynamicResource TextPrimaryBrush}"
+                                 CaretBrush="{DynamicResource TextPrimaryBrush}"
+                                 SelectionBrush="{DynamicResource AccentBrush}"
+                                 FontFamily="{DynamicResource UiFontFamily}" FontSize="12"
+                                 VerticalContentAlignment="Center"
+                                 FocusVisualStyle="{x:Null}"
+                                 TextChanged="FindInput_TextChanged"
+                                 PreviewKeyDown="FindInput_PreviewKeyDown" />
+                        <TextBlock x:Name="FindCounter" Grid.Column="1" Text="0/0"
+                                   Margin="7,0,6,0" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" />
+                        <Button Grid.Column="2" Style="{StaticResource PopupCompactIconButtonStyle}"
+                                ToolTip="{x:Static res:Strings.FindPrevious}" Click="FindPreviousButton_Click">
+                            <Viewbox Width="12" Height="12">
+                                <Path Data="{StaticResource IconFindChevronUp}"
+                                      Fill="{DynamicResource TextSecondaryBrush}" Stretch="Uniform">
+                                    <Path.Style>
+                                        <Style TargetType="Path">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                </Path>
+                            </Viewbox>
+                        </Button>
+                        <Button Grid.Column="3" Style="{StaticResource PopupCompactIconButtonStyle}"
+                                ToolTip="{x:Static res:Strings.FindNext}" Click="FindNextButton_Click">
+                            <Viewbox Width="12" Height="12">
+                                <Path Data="{StaticResource IconFindChevronDown}"
+                                      Fill="{DynamicResource TextSecondaryBrush}" Stretch="Uniform">
+                                    <Path.Style>
+                                        <Style TargetType="Path">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                </Path>
+                            </Viewbox>
+                        </Button>
+                        <Button Grid.Column="4" Style="{StaticResource PopupCompactIconButtonStyle}"
+                                ToolTip="{x:Static res:Strings.FindClose}" Click="FindCloseButton_Click">
+                            <Viewbox Width="11" Height="11">
+                                <Path Data="{StaticResource IconFindClose}"
+                                      Fill="{DynamicResource TextSecondaryBrush}" Stretch="Uniform">
+                                    <Path.Style>
+                                        <Style TargetType="Path">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                                    <Setter Property="Fill" Value="{DynamicResource TextPrimaryBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                </Path>
+                            </Viewbox>
+                        </Button>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Popup>
 
         <!-- Yer imleri açılır listesi -->
         <Popup x:Name="BookmarksPopup" PlacementTarget="{Binding ElementName=BookmarksButton}"
@@ -300,91 +953,169 @@
         </Popup>
 
         <!-- Geçmiş açılır listesi -->
-        <Popup x:Name="HistoryPopup" PlacementTarget="{Binding ElementName=HistoryButton}"
+        <Popup x:Name="HistoryPopup" PlacementTarget="{Binding ElementName=MenuButton}"
                Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
             <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1" CornerRadius="8" Padding="8" MinWidth="280" MaxWidth="360">
+                    BorderThickness="1" CornerRadius="8" Padding="8" Width="400">
                 <StackPanel>
                     <Grid Margin="8,4,4,8">
                         <TextBlock Text="{x:Static res:Strings.History}" FontWeight="SemiBold" FontSize="13"
                                    Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" />
-                        <Button Content="{x:Static res:Strings.ClearHistory}" Style="{StaticResource TextLinkButtonStyle}"
-                                HorizontalAlignment="Right" Click="ClearHistoryButton_Click" />
+                        <Button Content="{x:Static res:Strings.ShowAllHistory}" Style="{StaticResource TextLinkButtonStyle}"
+                                HorizontalAlignment="Right" Click="ShowAllHistoryButton_Click" />
                     </Grid>
                     <TextBlock x:Name="HistoryEmptyText" Text="{x:Static res:Strings.HistoryEmpty}"
                                Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
                                Margin="8,0,8,8" />
-                    <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl x:Name="HistoryList">
+                    <ListBox x:Name="HistoryList" Style="{StaticResource VirtualizedPopupListBoxStyle}"
+                             ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="6" Padding="8,5" Style="{StaticResource BookmarkRowStyle}"
+                                        MouseLeftButtonUp="HistoryRow_MouseLeftButtonUp" Tag="{Binding}">
+                                    <Grid Height="30">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Viewbox Width="13" Height="13" HorizontalAlignment="Left">
+                                            <Path Data="{StaticResource IconHistory}" Fill="{StaticResource TextSecondaryBrush}" />
+                                        </Viewbox>
+                                        <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="12"
+                                                   FontWeight="SemiBold" VerticalAlignment="Center"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <Button Grid.Column="2" Style="{StaticResource TabCloseButtonStyle}"
+                                                Click="RemoveHistoryButton_Click" Tag="{Binding}">
+                                            <Viewbox Width="10" Height="10">
+                                                <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextSecondaryBrush}" />
+                                            </Viewbox>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <!-- Tam geçmiş ayrı tutulur: küçük popup hiçbir zaman yüzlerce satır
+             üretmez; bu liste yalnızca görünür satırları recycling ile oluşturur. -->
+        <Popup x:Name="AllHistoryPopup" PlacementTarget="{Binding ElementName=MenuButton}"
+               Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="10" Width="600">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" Margin="8,4,4,10">
+                        <TextBlock Text="{x:Static res:Strings.AllHistory}" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                        <Button Content="{x:Static res:Strings.ClearHistory}" Style="{StaticResource TextLinkButtonStyle}"
+                                HorizontalAlignment="Right" Click="ClearHistoryButton_Click" />
+                    </Grid>
+                    <TextBlock x:Name="AllHistoryEmptyText" DockPanel.Dock="Top"
+                               Text="{x:Static res:Strings.HistoryEmpty}"
+                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
+                               Margin="8,0,8,8" />
+                    <ListBox x:Name="AllHistoryList" MaxHeight="520"
+                             Style="{StaticResource VirtualizedPopupListBoxStyle}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="6" Padding="9,6" Style="{StaticResource BookmarkRowStyle}"
+                                        MouseLeftButtonUp="HistoryRow_MouseLeftButtonUp" Tag="{Binding}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="24" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Viewbox Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Path Data="{StaticResource IconHistory}" Fill="{StaticResource TextSecondaryBrush}" />
+                                        </Viewbox>
+                                        <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="12"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Url}" FontSize="10"
+                                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Style="{StaticResource TabCloseButtonStyle}"
+                                                Click="RemoveHistoryButton_Click" Tag="{Binding}">
+                                            <Viewbox Width="10" Height="10">
+                                                <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextSecondaryBrush}" />
+                                            </Viewbox>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+        </Popup>
+
+        <!-- İndirilenler açılır listesi -->
+        <Popup x:Name="DownloadsPopup" PlacementTarget="{Binding ElementName=DownloadsButton}"
+               ctrl:ToolbarPopupAnchor.AlignRightToTarget="True"
+               StaysOpen="False" AllowsTransparency="True">
+            <Grid>
+            <Border x:Name="DownloadsPopupSurface" Style="{StaticResource PopupSurfaceStyle}" Width="320" MaxWidth="320"
+                    Margin="{StaticResource PopupShadowHostMargin}" Padding="6">
+                <StackPanel>
+                    <TextBlock Text="{x:Static res:Strings.Downloads}" FontWeight="SemiBold" FontSize="12"
+                               Margin="8,4,8,5" Foreground="{DynamicResource TextPrimaryBrush}" />
+                    <TextBlock x:Name="DownloadsEmptyText" Text="{x:Static res:Strings.DownloadsEmpty}"
+                               Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"
+                               Margin="8,9,8,12" HorizontalAlignment="Center" />
+                    <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl x:Name="DownloadsList">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="6" Padding="8,6" Margin="0,1"
-                                            Style="{StaticResource BookmarkRowStyle}"
-                                            MouseLeftButtonUp="HistoryRow_MouseLeftButtonUp" Tag="{Binding}">
+                                    <Border Style="{StaticResource PopupCompactItemStyle}" Tag="{Binding}">
                                         <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="12"
-                                                           Foreground="{StaticResource TextPrimaryBrush}"
-                                                           TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{Binding Url}" FontSize="10"
-                                                           Foreground="{StaticResource TextSecondaryBrush}"
-                                                           TextTrimming="CharacterEllipsis" />
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <Border Width="26" Height="26" CornerRadius="6" Background="{DynamicResource SurfaceAltBrush}">
+                                                <TextBlock Text="{Binding FileTypeLabel}" FontSize="8" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="3,0,5,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding StatusText}" FontSize="10" Margin="0,2,0,0" Foreground="{DynamicResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                                <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" IsIndeterminate="{Binding IsIndeterminate, Mode=OneWay}" Minimum="0" Maximum="100" Height="3" Margin="0,4,0,0" Background="{DynamicResource SurfaceAltBrush}" Foreground="{DynamicResource AccentBrush}" BorderThickness="0">
+                                                    <ProgressBar.Style><Style TargetType="ProgressBar"><Style.Triggers><DataTrigger Binding="{Binding IsActive}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></ProgressBar.Style>
+                                                </ProgressBar>
                                             </StackPanel>
-                                            <Button Grid.Column="1" Style="{StaticResource TabCloseButtonStyle}"
-                                                    Click="RemoveHistoryButton_Click" Tag="{Binding}">
-                                                <Viewbox Width="12" Height="12">
-                                                    <Path Data="{StaticResource IconClose}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
-                                                </Viewbox>
-                                            </Button>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <StackPanel.Resources>
+                                                    <Style x:Key="PopupIconButtonStyle" TargetType="Button" BasedOn="{StaticResource PopupCompactIconButtonStyle}" />
+                                                    <Style x:Key="PopupDestructiveIconButtonStyle" TargetType="Button" BasedOn="{StaticResource PopupCompactDestructiveIconButtonStyle}" />
+                                                </StackPanel.Resources>
+                                                <Button ToolTip="{x:Static res:Strings.DownloadPause}" Tag="{Binding}" Click="DownloadPauseButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource PopupIconButtonStyle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CanPause}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style><TextBlock Text="&#xE769;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></Button>
+                                                <Button ToolTip="{x:Static res:Strings.DownloadResume}" Tag="{Binding}" Click="DownloadResumeButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource PopupIconButtonStyle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CanResume}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style><TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></Button>
+                                                <Button ToolTip="{x:Static res:Strings.DownloadCancel}" Tag="{Binding}" Click="DownloadCancelButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource PopupDestructiveIconButtonStyle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CanCancel}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style><TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="11"/></Button>
+                                                <Button ToolTip="{x:Static res:Strings.DownloadOpen}" Tag="{Binding}" Click="DownloadOpenButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource PopupIconButtonStyle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CanOpen}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style><TextBlock Text="&#xE8E5;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></Button>
+                                                <Button ToolTip="{x:Static res:Strings.DownloadShowInFolder}" Tag="{Binding}" Click="DownloadShowInFolderButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource PopupIconButtonStyle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CanShowInFolder}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style><TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></Button>
+                                                <Button ToolTip="{x:Static res:Strings.DownloadRetry}" Tag="{Binding}" Click="DownloadRetryButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource PopupIconButtonStyle}"><Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CanRetry}" Value="True"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers></Style></Button.Style><TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></Button>
+                                                <Button ToolTip="{x:Static res:Strings.DownloadRemoveFromHistory}" Tag="{Binding}" Click="DownloadRemoveButton_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource PopupDestructiveIconButtonStyle}"><Style.Triggers><DataTrigger Binding="{Binding IsActive}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></Button.Style><TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="12"/></Button>
+                                            </StackPanel>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
+                    <Border Style="{StaticResource PopupSeparatorStyle}" Margin="6,4"/>
+                    <Border Style="{StaticResource PopupCompactItemStyle}" MouseLeftButtonUp="ShowAllDownloadsButton_Click">
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <TextBlock Text="{x:Static res:Strings.ShowAllDownloads}" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Grid.Column="1" Text="&#xE76C;" FontFamily="Segoe MDL2 Assets" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0"/>
+                        </Grid>
+                    </Border>
                 </StackPanel>
             </Border>
-        </Popup>
-
-        <!-- İndirilenler açılır listesi -->
-        <Popup x:Name="DownloadsPopup" PlacementTarget="{Binding ElementName=DownloadsButton}"
-               Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
-            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1" CornerRadius="8" Padding="8" MinWidth="300" MaxWidth="380">
-                <StackPanel>
-                    <TextBlock Text="{x:Static res:Strings.Downloads}" FontWeight="SemiBold" FontSize="13"
-                               Margin="8,4,8,8" Foreground="{StaticResource TextPrimaryBrush}" />
-                    <TextBlock x:Name="DownloadsEmptyText" Text="{x:Static res:Strings.DownloadsEmpty}"
-                               Foreground="{StaticResource TextSecondaryBrush}" FontSize="12"
-                               Margin="8,0,8,8" />
-                    <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl x:Name="DownloadsList">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border CornerRadius="6" Padding="10,8" Margin="0,1"
-                                            Style="{StaticResource BookmarkRowStyle}"
-                                            MouseLeftButtonUp="DownloadRow_MouseLeftButtonUp" Tag="{Binding}">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding FileName}" FontWeight="SemiBold" FontSize="12"
-                                                       Foreground="{StaticResource TextPrimaryBrush}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Minimum="0" Maximum="100"
-                                                         Height="4" Margin="0,6,0,4" Background="{StaticResource SurfaceAltBrush}"
-                                                         Foreground="{StaticResource AccentBrush}" BorderThickness="0" />
-                                            <TextBlock Text="{Binding StatusText}" FontSize="10"
-                                                       Foreground="{StaticResource TextSecondaryBrush}" />
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </StackPanel>
-            </Border>
+            </Grid>
         </Popup>
 
         <!-- Sekme arama açılır listesi -->
@@ -404,9 +1135,13 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <Viewbox Grid.Column="0" Width="14" Height="14">
-                                            <Path Data="{StaticResource IconGlobe}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
-                                        </Viewbox>
+                                        <Grid Grid.Column="0" Width="14" Height="14">
+                                            <Viewbox Width="14" Height="14">
+                                                <Path Data="{StaticResource IconGlobe}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" />
+                                            </Viewbox>
+                                            <Image Source="{Binding FaviconUrl}" Width="14" Height="14"
+                                                   Stretch="Uniform" SnapsToDevicePixels="True" />
+                                        </Grid>
                                         <TextBlock Grid.Column="1" Text="{Binding Title}" Margin="8,0,0,0" FontSize="12"
                                                    Foreground="{StaticResource TextPrimaryBrush}"
                                                    TextTrimming="CharacterEllipsis" />
@@ -445,11 +1180,125 @@
                         <TextBlock Text="{x:Static res:Strings.Downloads}" FontSize="12"
                                    Foreground="{StaticResource TextPrimaryBrush}" />
                     </Border>
+                    <Border Height="1" Margin="4,5" Background="{StaticResource BorderBrush}" />
+                    <Border CornerRadius="6" Padding="10,7" Style="{StaticResource BookmarkRowStyle}"
+                            MouseLeftButtonUp="MenuSettings_Click">
+                        <TextBlock Text="{x:Static res:Strings.Settings}" FontSize="12"
+                                   Foreground="{StaticResource TextPrimaryBrush}" />
+                    </Border>
                 </StackPanel>
             </Border>
         </Popup>
 
-        <!-- Active browser host -->
-        <Grid x:Name="BrowserHost" />
+        <!-- Uygulama ayarları: tüm kullanıcı metinleri kaynaklardan, renkler tema sözlüklerinden gelir. -->
+        <Popup x:Name="SettingsPopup" PlacementTarget="{Binding ElementName=MenuButton}"
+               Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="14" Width="350">
+                <StackPanel>
+                    <TextBlock Text="{x:Static res:Strings.Settings}" FontSize="15" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,14" />
+
+                    <TextBlock Text="{x:Static res:Strings.Theme}" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                        <Button Content="{x:Static res:Strings.DarkTheme}" Style="{StaticResource BookmarkChipStyle}"
+                                Click="ThemeButton_Click" Tag="Dark" Margin="0,0,6,0" />
+                        <Button Content="{x:Static res:Strings.LightTheme}" Style="{StaticResource BookmarkChipStyle}"
+                                Click="ThemeButton_Click" Tag="Light" />
+                    </StackPanel>
+
+                    <TextBlock Text="{x:Static res:Strings.Language}" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                        <Button Content="{x:Static res:Strings.Turkish}" Style="{StaticResource BookmarkChipStyle}"
+                                Click="LanguageButton_Click" Tag="tr-TR" Margin="0,0,6,0" />
+                        <Button Content="{x:Static res:Strings.English}" Style="{StaticResource BookmarkChipStyle}"
+                                Click="LanguageButton_Click" Tag="en-US" />
+                    </StackPanel>
+
+                    <TextBlock Text="{x:Static res:Strings.SearchEngine}" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                    <WrapPanel Margin="0,0,0,12">
+                        <Button Content="Google" Style="{StaticResource BookmarkChipStyle}"
+                                Click="SearchEngineButton_Click" Tag="Google" Margin="0,0,6,4" />
+                        <Button Content="Bing" Style="{StaticResource BookmarkChipStyle}"
+                                Click="SearchEngineButton_Click" Tag="Bing" Margin="0,0,6,4" />
+                        <Button Content="DuckDuckGo" Style="{StaticResource BookmarkChipStyle}"
+                                Click="SearchEngineButton_Click" Tag="DuckDuckGo" Margin="0,0,0,4" />
+                    </WrapPanel>
+
+                    <TextBlock Text="{x:Static res:Strings.DownloadLocation}" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                        <Border Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1" CornerRadius="6" Padding="8,6" Margin="0,0,8,0">
+                            <TextBlock x:Name="DownloadLocationText" FontSize="10" Foreground="{DynamicResource TextPrimaryBrush}"
+                                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                        </Border>
+                        <Button Grid.Column="1" Content="{x:Static res:Strings.ChooseDownloadLocation}"
+                                Style="{StaticResource BookmarkChipStyle}" Click="ChooseDownloadLocationButton_Click" />
+                    </Grid>
+                    <CheckBox x:Name="AskWhereToSaveDownloadsCheckBox"
+                              Content="{x:Static res:Strings.AskWhereToSaveDownloads}"
+                              Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Margin="0,0,0,10"
+                              Click="AskWhereToSaveDownloadsCheckBox_Click" />
+
+                    <CheckBox x:Name="ShowFindButtonCheckBox"
+                              Content="{x:Static res:Strings.ShowFindButtonInToolbar}"
+                              Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11" Margin="0,0,0,10"
+                              Click="ShowFindButtonCheckBox_Click" />
+
+                    <CheckBox x:Name="RestoreSessionCheckBox" Content="{x:Static res:Strings.RestoreSession}"
+                              Foreground="{StaticResource TextPrimaryBrush}" FontSize="12"
+                              Click="RestoreSessionCheckBox_Click" />
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <Popup x:Name="SiteInfoPopup" PlacementTarget="{Binding ElementName=SiteControls}"
+               Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="14" Width="300">
+                <StackPanel>
+                    <TextBlock Text="{x:Static res:Strings.SitePermissions}" FontSize="14" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock x:Name="SiteAddressText" Margin="0,4,0,12" FontSize="11"
+                               Foreground="{StaticResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="SiteSecurityText" FontSize="12"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <Popup x:Name="PermissionPopup" PlacementTarget="{Binding ElementName=AddressBar}"
+               Placement="Bottom" StaysOpen="True" AllowsTransparency="True" PopupAnimation="Fade">
+            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="14" Width="360">
+                <StackPanel>
+                    <TextBlock Text="{x:Static res:Strings.PermissionRequest}" FontSize="13" FontWeight="SemiBold"
+                               Foreground="{StaticResource TextPrimaryBrush}" />
+                    <TextBlock x:Name="PermissionOriginText" Margin="0,5,0,2" FontSize="11"
+                               Foreground="{StaticResource TextSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="PermissionTypeText" Margin="0,0,0,12" FontSize="12"
+                               Foreground="{StaticResource TextPrimaryBrush}" TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="{x:Static res:Strings.Block}" Style="{StaticResource BookmarkChipStyle}"
+                                Click="DenyPermissionButton_Click" Margin="0,0,6,0" />
+                        <Button Content="{x:Static res:Strings.Allow}" Style="{StaticResource BookmarkChipStyle}"
+                                Click="AllowPermissionButton_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <!-- Active browser host. Zemin rengi tema arka planıyla birebir eşlenir;
+             geçişlerde veya yüklemelerde hiçbir beyaz/parlak katman görünmez. -->
+        <Grid x:Name="BrowserHost" Background="{DynamicResource BackgroundBrush}" />
     </DockPanel>
+    <Canvas x:Name="TabDragOverlay" Panel.ZIndex="1000" IsHitTestVisible="False"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+    </Grid>
+    </Border>
 </Window>
